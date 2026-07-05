@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-05 23:32:30
+	Generated at: 2026-07-05 23:40:14
 ]]
 
 --// File: src/init.lua //--
@@ -38,12 +38,12 @@ Tab.__index = Tab
 
 --// Fonts
 NovaLib.Fonts = {
-    Title  = Enum.Font.GothamBold,
-    Body   = Enum.Font.Gotham,
-    Medium = Enum.Font.GothamMedium,
-    Bold   = Enum.Font.GothamBold,
-    Mono   = Enum.Font.Code,
-    Pixel  = Enum.Font.Arcade,
+    Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
+    Body   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular),
+    Medium = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium),
+    Bold   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
+    Mono   = Font.new("rbxasset://fonts/families/Code.json", Enum.FontWeight.Regular),
+    Pixel  = Font.new("rbxasset://fonts/families/Arcade.json", Enum.FontWeight.Regular),
 }
 
 --// Standardized control heights
