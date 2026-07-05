@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-05 23:27:53
+	Generated at: 2026-07-05 23:32:30
 ]]
 
 --// File: src/init.lua //--
@@ -35,6 +35,23 @@ local Mouse = LocalPlayer and LocalPlayer:GetMouse()
 --// Tab metatable (used by all element files)
 local Tab = {}
 Tab.__index = Tab
+
+--// Fonts
+NovaLib.Fonts = {
+    Title  = Enum.Font.GothamBold,
+    Body   = Enum.Font.Gotham,
+    Medium = Enum.Font.GothamMedium,
+    Bold   = Enum.Font.GothamBold,
+    Mono   = Enum.Font.Code,
+    Pixel  = Enum.Font.Arcade,
+}
+
+--// Standardized control heights
+NovaLib.Sizes = {
+    Small  = 34,
+    Normal = 42,
+    Large  = 54,
+}
 
 
 --// File: src/Themes.lua //--
