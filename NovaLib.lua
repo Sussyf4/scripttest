@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-05 23:18:51
+	Generated at: 2026-07-05 23:27:53
 ]]
 
 --// File: src/init.lua //--
@@ -31,6 +31,10 @@ local CoreGui = game:GetService("CoreGui")
 
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer and LocalPlayer:GetMouse()
+
+--// Tab metatable (used by all element files)
+local Tab = {}
+Tab.__index = Tab
 
 
 --// File: src/Themes.lua //--

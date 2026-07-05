@@ -24,3 +24,7 @@ local CoreGui = game:GetService("CoreGui")
 
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer and LocalPlayer:GetMouse()
+
+--// Tab metatable (used by all element files)
+local Tab = {}
+Tab.__index = Tab
