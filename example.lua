@@ -146,11 +146,13 @@ SettingsTab:CreateSection("Configuration")
 
 SettingsTab:CreateButton({
 	Name = "Save Config",
+	Icon = "save",
 	Callback = function() Window:SaveConfig("myconfig") end,
 })
 
 SettingsTab:CreateButton({
 	Name = "Load Config",
+	Icon = "file",
 	Callback = function() Window:LoadConfig("myconfig") end,
 })
 

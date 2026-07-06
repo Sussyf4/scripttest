@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-05 23:40:14
+	Generated at: 2026-07-06 14:59:48
 ]]
 
 --// File: src/init.lua //--
@@ -36,14 +36,19 @@ local Mouse = LocalPlayer and LocalPlayer:GetMouse()
 local Tab = {}
 Tab.__index = Tab
 
+--// Window metatable (used to modularize window functions)
+local WindowProto = {}
+WindowProto.__index = WindowProto
+
 --// Fonts
 NovaLib.Fonts = {
     Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
     Body   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular),
     Medium = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium),
     Bold   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-    Mono   = Font.new("rbxasset://fonts/families/Code.json", Enum.FontWeight.Regular),
-    Pixel  = Font.new("rbxasset://fonts/families/Arcade.json", Enum.FontWeight.Regular),
+    Mono   = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Regular),
+    Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular),
+    Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
 }
 
 --// Standardized control heights
@@ -54,403 +59,424 @@ NovaLib.Sizes = {
 }
 
 
---// File: src/Themes.lua //--
---// Themes (pure colors, no assets)
-NovaLib.Themes = {
-	Black = {
-		Background   = Color3.fromRGB(2, 2, 3),
-		Secondary    = Color3.fromRGB(9, 9, 11),
-		Tertiary     = Color3.fromRGB(17, 17, 21),
-		Hover        = Color3.fromRGB(23, 23, 28),
-		Border       = Color3.fromRGB(26, 26, 32),
-		Card         = Color3.fromRGB(9, 9, 11),
-		Surface      = Color3.fromRGB(17, 17, 21),
-		Input        = Color3.fromRGB(5, 5, 7),
-		Disabled     = Color3.fromRGB(70, 70, 80),
-		Accent       = Color3.fromRGB(0, 160, 255),
-		AccentDark   = Color3.fromRGB(0, 110, 195),
-		AccentGlow   = Color3.fromRGB(60, 190, 255),
-		Text         = Color3.fromRGB(245, 245, 250),
-		SubText      = Color3.fromRGB(125, 125, 140),
-		Stroke       = Color3.fromRGB(26, 26, 32),
-		StrokeLight  = Color3.fromRGB(38, 38, 46),
-		Success      = Color3.fromRGB(70, 215, 125),
-		Error        = Color3.fromRGB(245, 85, 85),
-		Warning      = Color3.fromRGB(250, 185, 60),
-	},
-	Dark = {
-		Background   = Color3.fromRGB(14, 14, 18),
-		Secondary    = Color3.fromRGB(22, 22, 28),
-		Tertiary     = Color3.fromRGB(30, 30, 38),
-		Hover        = Color3.fromRGB(38, 38, 48),
-		Border       = Color3.fromRGB(44, 44, 55),
-		Card         = Color3.fromRGB(22, 22, 28),
-		Surface      = Color3.fromRGB(30, 30, 38),
-		Input        = Color3.fromRGB(18, 18, 23),
-		Disabled     = Color3.fromRGB(90, 90, 105),
-		Accent       = Color3.fromRGB(90, 140, 255),
-		AccentDark   = Color3.fromRGB(60, 100, 200),
-		AccentGlow   = Color3.fromRGB(130, 170, 255),
-		Text         = Color3.fromRGB(235, 235, 245),
-		SubText      = Color3.fromRGB(150, 150, 165),
-		Stroke       = Color3.fromRGB(44, 44, 55),
-		StrokeLight  = Color3.fromRGB(58, 58, 72),
-		Success      = Color3.fromRGB(80, 200, 120),
-		Error        = Color3.fromRGB(235, 87, 87),
-		Warning      = Color3.fromRGB(240, 180, 60),
-	},
-	Light = {
-		Background   = Color3.fromRGB(242, 242, 247),
-		Secondary    = Color3.fromRGB(230, 230, 237),
-		Tertiary     = Color3.fromRGB(216, 216, 226),
-		Hover        = Color3.fromRGB(205, 205, 216),
-		Border       = Color3.fromRGB(190, 190, 200),
-		Card         = Color3.fromRGB(230, 230, 237),
-		Surface      = Color3.fromRGB(216, 216, 226),
-		Input        = Color3.fromRGB(250, 250, 253),
-		Disabled     = Color3.fromRGB(150, 150, 160),
-		Accent       = Color3.fromRGB(70, 120, 240),
-		AccentDark   = Color3.fromRGB(50, 90, 190),
-		AccentGlow   = Color3.fromRGB(110, 155, 250),
-		Text         = Color3.fromRGB(25, 25, 35),
-		SubText      = Color3.fromRGB(100, 100, 115),
-		Stroke       = Color3.fromRGB(190, 190, 200),
-		StrokeLight  = Color3.fromRGB(175, 175, 188),
-		Success      = Color3.fromRGB(50, 170, 95),
-		Error        = Color3.fromRGB(220, 70, 70),
-		Warning      = Color3.fromRGB(220, 160, 40),
-	},
-	Midnight = {
-		Background   = Color3.fromRGB(7, 9, 16),
-		Secondary    = Color3.fromRGB(13, 17, 28),
-		Tertiary     = Color3.fromRGB(21, 27, 42),
-		Hover        = Color3.fromRGB(28, 36, 55),
-		Border       = Color3.fromRGB(34, 42, 64),
-		Card         = Color3.fromRGB(13, 17, 28),
-		Surface      = Color3.fromRGB(21, 27, 42),
-		Input        = Color3.fromRGB(10, 13, 22),
-		Disabled     = Color3.fromRGB(90, 96, 120),
-		Accent       = Color3.fromRGB(130, 90, 255),
-		AccentDark   = Color3.fromRGB(95, 60, 200),
-		AccentGlow   = Color3.fromRGB(165, 130, 255),
-		Text         = Color3.fromRGB(230, 230, 245),
-		SubText      = Color3.fromRGB(140, 145, 170),
-		Stroke       = Color3.fromRGB(34, 42, 64),
-		StrokeLight  = Color3.fromRGB(48, 58, 86),
-		Success      = Color3.fromRGB(80, 200, 120),
-		Error        = Color3.fromRGB(235, 87, 87),
-		Warning      = Color3.fromRGB(240, 180, 60),
-	},
+--// File: src/Themes/init.lua //--
+--// Central Theme Management
+NovaLib.Themes = {}
+local Theme
+
+
+--// File: src/Themes/Dark.lua //--
+NovaLib.Themes.Dark = {
+	Background   = Color3.fromRGB(14, 14, 18),
+	Secondary    = Color3.fromRGB(22, 22, 28),
+	Tertiary     = Color3.fromRGB(30, 30, 38),
+	Hover        = Color3.fromRGB(38, 38, 48),
+	Border       = Color3.fromRGB(44, 44, 55),
+	Card         = Color3.fromRGB(22, 22, 28),
+	Surface      = Color3.fromRGB(30, 30, 38),
+	Input        = Color3.fromRGB(18, 18, 23),
+	Disabled     = Color3.fromRGB(90, 90, 105),
+	Accent       = Color3.fromRGB(90, 140, 255),
+	AccentDark   = Color3.fromRGB(60, 100, 200),
+	AccentGlow   = Color3.fromRGB(130, 170, 255),
+	Text         = Color3.fromRGB(235, 235, 245),
+	SubText      = Color3.fromRGB(150, 150, 165),
+	Stroke       = Color3.fromRGB(44, 44, 55),
+	StrokeLight  = Color3.fromRGB(58, 58, 72),
+	Success      = Color3.fromRGB(80, 200, 120),
+	Error        = Color3.fromRGB(235, 87, 87),
+	Warning      = Color3.fromRGB(240, 180, 60),
 }
 
-local Theme = NovaLib.Themes.Black
+
+--// File: src/Themes/Darker.lua //--
+NovaLib.Themes.Darker = {
+	Background   = Color3.fromRGB(2, 2, 3),
+	Secondary    = Color3.fromRGB(9, 9, 11),
+	Tertiary     = Color3.fromRGB(17, 17, 21),
+	Hover        = Color3.fromRGB(23, 23, 28),
+	Border       = Color3.fromRGB(26, 26, 32),
+	Card         = Color3.fromRGB(9, 9, 11),
+	Surface      = Color3.fromRGB(17, 17, 21),
+	Input        = Color3.fromRGB(5, 5, 7),
+	Disabled     = Color3.fromRGB(70, 70, 80),
+	Accent       = Color3.fromRGB(0, 160, 255),
+	AccentDark   = Color3.fromRGB(0, 110, 195),
+	AccentGlow   = Color3.fromRGB(60, 190, 255),
+	Text         = Color3.fromRGB(245, 245, 250),
+	SubText      = Color3.fromRGB(125, 125, 140),
+	Stroke       = Color3.fromRGB(26, 26, 32),
+	StrokeLight  = Color3.fromRGB(38, 38, 46),
+	Success      = Color3.fromRGB(70, 215, 125),
+	Error        = Color3.fromRGB(245, 85, 85),
+	Warning      = Color3.fromRGB(250, 185, 60),
+}
+
+
+--// File: src/Themes/Light.lua //--
+NovaLib.Themes.Light = {
+	Background   = Color3.fromRGB(242, 242, 247),
+	Secondary    = Color3.fromRGB(230, 230, 237),
+	Tertiary     = Color3.fromRGB(216, 216, 226),
+	Hover        = Color3.fromRGB(205, 205, 216),
+	Border       = Color3.fromRGB(190, 190, 200),
+	Card         = Color3.fromRGB(230, 230, 237),
+	Surface      = Color3.fromRGB(216, 216, 226),
+	Input        = Color3.fromRGB(250, 250, 253),
+	Disabled     = Color3.fromRGB(150, 150, 160),
+	Accent       = Color3.fromRGB(70, 120, 240),
+	AccentDark   = Color3.fromRGB(50, 90, 190),
+	AccentGlow   = Color3.fromRGB(110, 155, 250),
+	Text         = Color3.fromRGB(25, 25, 35),
+	SubText      = Color3.fromRGB(100, 100, 115),
+	Stroke       = Color3.fromRGB(190, 190, 200),
+	StrokeLight  = Color3.fromRGB(175, 175, 188),
+	Success      = Color3.fromRGB(50, 170, 95),
+	Error        = Color3.fromRGB(220, 70, 70),
+	Warning      = Color3.fromRGB(220, 160, 40),
+}
+
+
+--// File: src/Themes/Amethyst.lua //--
+NovaLib.Themes.Amethyst = {
+	Background   = Color3.fromRGB(13, 10, 24),
+	Secondary    = Color3.fromRGB(20, 16, 36),
+	Tertiary     = Color3.fromRGB(28, 23, 50),
+	Hover        = Color3.fromRGB(36, 30, 64),
+	Border       = Color3.fromRGB(44, 38, 76),
+	Card         = Color3.fromRGB(20, 16, 36),
+	Surface      = Color3.fromRGB(28, 23, 50),
+	Input        = Color3.fromRGB(15, 12, 28),
+	Disabled     = Color3.fromRGB(100, 95, 125),
+	Accent       = Color3.fromRGB(160, 90, 255),
+	AccentDark   = Color3.fromRGB(120, 60, 210),
+	AccentGlow   = Color3.fromRGB(190, 130, 255),
+	Text         = Color3.fromRGB(240, 235, 255),
+	SubText      = Color3.fromRGB(160, 150, 185),
+	Stroke       = Color3.fromRGB(44, 38, 76),
+	StrokeLight  = Color3.fromRGB(60, 52, 100),
+	Success      = Color3.fromRGB(80, 200, 120),
+	Error        = Color3.fromRGB(235, 87, 87),
+	Warning      = Color3.fromRGB(240, 180, 60),
+}
+
+
+--// File: src/Themes/Aqua.lua //--
+NovaLib.Themes.Aqua = {
+	Background   = Color3.fromRGB(6, 14, 20),
+	Secondary    = Color3.fromRGB(11, 23, 31),
+	Tertiary     = Color3.fromRGB(17, 33, 44),
+	Hover        = Color3.fromRGB(22, 41, 54),
+	Border       = Color3.fromRGB(28, 50, 65),
+	Card         = Color3.fromRGB(11, 23, 31),
+	Surface      = Color3.fromRGB(17, 33, 44),
+	Input        = Color3.fromRGB(8, 17, 24),
+	Disabled     = Color3.fromRGB(90, 110, 120),
+	Accent       = Color3.fromRGB(0, 206, 209),
+	AccentDark   = Color3.fromRGB(0, 150, 150),
+	AccentGlow   = Color3.fromRGB(100, 240, 240),
+	Text         = Color3.fromRGB(230, 245, 245),
+	SubText      = Color3.fromRGB(140, 165, 175),
+	Stroke       = Color3.fromRGB(28, 50, 65),
+	StrokeLight  = Color3.fromRGB(40, 70, 90),
+	Success      = Color3.fromRGB(80, 200, 120),
+	Error        = Color3.fromRGB(235, 87, 87),
+	Warning      = Color3.fromRGB(240, 180, 60),
+}
+
+
+--// File: src/Themes/Rose.lua //--
+NovaLib.Themes.Rose = {
+	Background   = Color3.fromRGB(20, 8, 12),
+	Secondary    = Color3.fromRGB(31, 13, 20),
+	Tertiary     = Color3.fromRGB(44, 19, 29),
+	Hover        = Color3.fromRGB(54, 24, 36),
+	Border       = Color3.fromRGB(65, 29, 44),
+	Card         = Color3.fromRGB(31, 13, 20),
+	Surface      = Color3.fromRGB(44, 19, 29),
+	Input        = Color3.fromRGB(24, 10, 15),
+	Disabled     = Color3.fromRGB(120, 90, 100),
+	Accent       = Color3.fromRGB(255, 105, 180),
+	AccentDark   = Color3.fromRGB(200, 70, 130),
+	AccentGlow   = Color3.fromRGB(255, 150, 200),
+	Text         = Color3.fromRGB(255, 235, 240),
+	SubText      = Color3.fromRGB(180, 140, 155),
+	Stroke       = Color3.fromRGB(65, 29, 44),
+	StrokeLight  = Color3.fromRGB(90, 40, 60),
+	Success      = Color3.fromRGB(80, 200, 120),
+	Error        = Color3.fromRGB(235, 87, 87),
+	Warning      = Color3.fromRGB(240, 180, 60),
+}
+
+Theme = NovaLib.Themes.Darker
 
 
 --// File: src/Icons.lua //--
---// Icons — PNG assets hosted on GitHub (loaded via HttpGet)
---// The base URL points to the /assets/ folder in your repo.
---// Change ICON_BASE_URL if you host elsewhere.
+--// Icons — Roblox Image assets mapped to asset IDs
+--// Usage: NovaLib:GetIcon("name") returns the rbxassetid:// URL.
 
-local ICON_BASE_URL = "https://raw.githubusercontent.com/Sussyf4/scripttest/main/assets/"
-
---// All available icons.
---// Format: short-name → PNG filename (no path, just filename).
---// Usage: NovaLib:GetIcon("name") returns the full URL.
 NovaLib.Icons = {
-	--// Window Controls
-	["x"]                   = "x.png",
-	["minus"]               = "minus.png",
-	["plus"]                = "plus.png",
-	["maximize"]            = "maximize.png",
-	["maximize-2"]          = "maximize-2.png",
-	["minimize"]            = "minimize.png",
-	["minimize-2"]          = "minimize-2.png",
-	["menu"]                = "menu.png",
-	["expand"]              = "expand.png",
-	["move-horizontal"]     = "move-horizontal.png",
-	["move-vertical"]       = "move-vertical.png",
-	["move-diagonal"]       = "move-diagonal.png",
-	["move-diagonal-2"]     = "move-diagonal-2.png",
-
-	--// Element Indicators
-	["check"]               = "check.png",
-	["check-circle"]        = "check-circle.png",
-	["check-circle-2"]      = "check-circle-2.png",
-	["check-square"]        = "check-square.png",
-	["chevron-down"]        = "chevron-down.png",
-	["chevron-up"]          = "chevron-up.png",
-	["chevron-left"]        = "chevron-left.png",
-	["chevron-right"]       = "chevron-right.png",
-	["chevron-first"]       = "chevron-first.png",
-	["chevron-last"]        = "chevron-last.png",
-	["chevrons-down"]       = "chevrons-down.png",
-	["chevrons-up"]         = "chevrons-up.png",
-	["chevrons-left"]       = "chevrons-left.png",
-	["chevrons-right"]      = "chevrons-right.png",
-	["chevrons-down-up"]    = "chevrons-down-up.png",
-	["chevrons-up-down"]    = "chevrons-up-down.png",
-	["chevrons-left-right"] = "chevrons-left-right.png",
-	["chevrons-right-left"] = "chevrons-right-left.png",
-
-	--// Notifications & Status
-	["info"]                = "info.png",
-	["alert-circle"]        = "alert-circle.png",
-	["alert-octagon"]       = "alert-octagon.png",
-	["alert-triangle"]      = "alert-triangle.png",
-	["x-circle"]            = "x-circle.png",
-	["minus-circle"]        = "minus-circle.png",
-	["plus-circle"]         = "plus-circle.png",
-	["plus-square"]         = "plus-square.png",
-	["verified"]            = "verified.png",
-	["shield"]              = "shield.png",
-	["shield-check"]        = "shield-check.png",
-	["shield-alert"]        = "shield-alert.png",
-	["shield-close"]        = "shield-close.png",
-
-	--// Tabs & Buttons
-	["eye"]                 = "eye.png",
-	["eye-off"]             = "eye-off.png",
-	["settings"]            = "settings.png",
-	["settings-2"]          = "settings-2.png",
-	["cog"]                 = "cog.png",
-	["home"]                = "home.png",
-	["search"]              = "search.png",
-	["filter"]              = "filter.png",
-	["bell"]                = "bell.png",
-	["bell-off"]            = "bell-off.png",
-	["star"]                = "star.png",
-	["heart"]               = "heart.png",
-	["sparkles"]            = "star.png",
-	["flame"]               = "flame.png",
-	["lightbulb"]           = "lightbulb.png",
-	["lightbulb-off"]       = "lightbulb-off.png",
-	["gem"]                 = "gem.png",
-	["rocket"]              = "rocket.png",
-	["sword"]               = "sword.png",
-	["wand"]                = "wand.png",
-	["skull"]               = "skull.png",
-	["bomb"]                = "bomb.png",
-	["bug"]                 = "bug.png",
-
-	--// User & People
-	["user"]                = "user.png",
-	["users"]               = "users.png",
-	["user-plus"]           = "user-plus.png",
-	["user-minus"]          = "user-minus.png",
-	["user-check"]          = "user-check.png",
-	["bot"]                 = "bot.png",
-
-	--// Actions
-	["save"]                = "save.png",
-	["download"]            = "download.png",
-	["download-cloud"]      = "download-cloud.png",
-	["upload"]              = "upload.png",
-	["trash"]               = "trash.png",
-	["trash-2"]             = "trash-2.png",
-	["edit"]                = "edit.png",
-	["edit-2"]              = "edit-2.png",
-	["edit-3"]              = "edit-3.png",
-	["copy"]                = "copy.png",
-	["scissors"]            = "scissors.png",
-	["clipboard"]           = "clipboard.png",
-	["clipboard-check"]     = "clipboard-check.png",
-	["clipboard-copy"]      = "clipboard-copy.png",
-	["clipboard-x"]         = "clipboard-x.png",
-	["undo"]                = "undo.png",
-	["undo-2"]              = "undo-2.png",
-	["redo"]                = "redo.png",
-	["redo-2"]              = "redo-2.png",
-	["refresh-cw"]          = "refresh-cw.png",
-	["delete"]              = "delete.png",
-	["eraser"]              = "eraser.png",
-	["import"]              = "import.png",
-
-	--// Arrows & Navigation
-	["arrow-up"]            = "arrow-up.png",
-	["arrow-down"]          = "arrow-down.png",
-	["arrow-left"]          = "arrow-left.png",
-	["arrow-right"]         = "arrow-right.png",
-	["arrow-up-left"]       = "arrow-up-left.png",
-	["arrow-up-right"]      = "arrow-up-right.png",
-	["arrow-down-left"]     = "arrow-down-left.png",
-	["arrow-down-right"]    = "arrow-down-right.png",
-	["arrow-up-circle"]     = "arrow-up-circle.png",
-	["arrow-down-circle"]   = "arrow-down-circle.png",
-	["arrow-left-circle"]   = "arrow-left-circle.png",
-	["arrow-right-circle"]  = "arrow-right-circle.png",
-	["arrow-left-right"]    = "arrow-left-right.png",
-	["arrow-up-down"]       = "arrow-up-down.png",
-	["arrow-big-left"]      = "arrow-big-left.png",
-	["arrow-big-right"]     = "arrow-big-right.png",
-	["arrow-big-up"]        = "arrow-big-up.png",
-	["corner-up-left"]      = "corner-up-left.png",
-	["corner-up-right"]     = "corner-up-right.png",
-	["corner-down-left"]    = "corner-down-left.png",
-	["corner-down-right"]   = "corner-down-right.png",
-	["corner-left-up"]      = "corner-left-up.png",
-	["corner-left-down"]    = "corner-left-down.png",
-	["corner-right-up"]     = "corner-right-up.png",
-	["corner-right-down"]   = "corner-right-down.png",
-	["navigation"]          = "navigation.png",
-	["navigation-2"]        = "navigation-2.png",
-	["compass"]             = "compass.png",
-	["locate"]              = "locate.png",
-	["locate-fixed"]        = "locate-fixed.png",
-	["locate-off"]          = "locate-off.png",
-	["map"]                 = "map.png",
-	["crosshair"]           = "crosshair.png",
-	["target"]              = "target.png",
-	["focus"]               = "focus.png",
-	["mouse-pointer"]       = "mouse-pointer-2.png",
-	["mouse-pointer-click"] = "mouse-pointer-click.png",
-
-	--// Files & Folders
-	["file"]                = "file.png",
-	["folder"]              = "folder.png",
-	["folder-open"]         = "folder-open.png",
-	["image"]               = "image.png",
-	["link"]                = "link.png",
-	["link-2"]              = "link-2.png",
-	["link-2-off"]          = "link-2-off.png",
-	["unlink"]              = "unlink.png",
-	["unlink-2"]            = "unlink-2.png",
-	["external-link"]       = "external-link.png",
-	["inbox"]               = "inbox.png",
-
-	--// Communication
-	["message-circle"]      = "message-circle.png",
-	["message-square"]      = "message-square.png",
-	["phone"]               = "phone.png",
-	["mail"]                = "mail.png",
-	["mail-open"]           = "mail-open.png",
-	["send"]                = "send.png",
-	["share"]               = "share.png",
-	["share-2"]             = "share-2.png",
-
-	--// Scheduling & Time
-	["calendar"]            = "calendar.png",
-	["clock"]               = "clock.png",
-	["alarm-check"]         = "alarm-check.png",
-	["alarm-clock"]         = "alarm-clock.png",
-	["alarm-clock-off"]     = "alarm-clock-off.png",
-	["alarm-minus"]         = "alarm-minus.png",
-	["alarm-plus"]          = "alarm-plus.png",
-
-	--// Labels & Tags
-	["tag"]                 = "tag.png",
-	["bookmark"]            = "bookmark.png",
-	["flag"]                = "flag.png",
-	["pin"]                 = "pin.png",
-
-	--// Media & Playback
-	["play"]                = "play.png",
-	["pause"]               = "pause.png",
-	["volume"]              = "volume.png",
-	["mic"]                 = "mic.png",
-	["camera"]              = "camera.png",
-	["rss"]                 = "rss.png",
-
-	--// Data & Infrastructure
-	["database"]            = "database.png",
-	["server"]              = "server.png",
-	["server-cog"]          = "server-cog.png",
-	["server-crash"]        = "server-crash.png",
-	["server-off"]          = "server-off.png",
-	["hard-drive"]          = "hard-drive.png",
-	["cpu"]                 = "cpu.png",
-	["terminal"]            = "terminal.png",
-	["code"]                = "code.png",
-	["code-2"]              = "code-2.png",
-	["command"]             = "command.png",
-	["key"]                 = "key.png",
-	["fingerprint"]         = "fingerprint.png",
-	["lock"]                = "lock.png",
-	["unlock"]              = "unlock.png",
-	["wifi"]                = "wifi.png",
-	["wifi-off"]            = "wifi-off.png",
-	["bluetooth"]           = "bluetooth.png",
-	["signal"]              = "signal.png",
-	["signal-high"]         = "signal-high.png",
-	["signal-medium"]       = "signal-medium.png",
-	["signal-low"]          = "signal-low.png",
-	["signal-zero"]         = "signal-zero.png",
-	["cloud"]               = "cloud.png",
-	["cloud-cog"]           = "cloud-cog.png",
-	["cloud-drizzle"]       = "cloud-drizzle.png",
-	["cloud-fog"]           = "cloud-fog.png",
-	["cloud-hail"]          = "cloud-hail.png",
-	["cloud-lightning"]     = "cloud-lightning.png",
-	["cloud-moon"]          = "cloud-moon.png",
-	["cloud-moon-rain"]     = "cloud-moon-rain.png",
-	["cloud-off"]           = "cloud-off.png",
-	["cloud-rain"]          = "cloud-rain.png",
-	["cloud-rain-wind"]     = "cloud-rain-wind.png",
-	["cloud-snow"]          = "cloud-snow.png",
-	["cloud-sun"]           = "cloud-sun.png",
-	["cloud-sun-rain"]      = "cloud-sun-rain.png",
-	["cloudy"]              = "cloudy.png",
-	["snowflake"]           = "snowflake.png",
-	["sun"]                 = "sun.png",
-	["sun-dim"]             = "sun-dim.png",
-	["moon"]                = "moon.png",
-	["power"]               = "power.png",
-	["power-off"]           = "power-off.png",
-	["electricity"]         = "electricity.png",
-	["electricity-off"]     = "electricity-off.png",
-	["loader"]              = "loader.png",
-	["loader-2"]            = "loader-2.png",
-
-	--// Layout & UI
-	["layers"]              = "layers.png",
-	["layout"]              = "layout.png",
-	["grid"]                = "grid.png",
-	["list"]                = "list.png",
-	["list-ordered"]        = "list-ordered.png",
-	["sliders"]             = "sliders.png",
-	["sliders-horizontal"]  = "sliders-horizontal.png",
-	["toggle-left"]         = "toggle-left.png",
-	["toggle-right"]        = "toggle-right.png",
-	["separator-horizontal"] = "separator-horizontal.png",
-	["separator-vertical"]  = "separator-vertical.png",
-	["sort-asc"]            = "sort-asc.png",
-	["sort-desc"]           = "sort-desc.png",
-	["scroll"]              = "scroll.png",
-
-	--// Misc
-	["accessibility"]       = "accessibility.png",
-	["activity"]            = "activity.png",
-	["baseline"]            = "baseline.png",
-	["bus"]                 = "bus.png",
-	["cake"]                = "cake.png",
-	["clover"]              = "clover.png",
-	["coffee"]              = "coffee.png",
-	["copyleft"]            = "copyleft.png",
-	["copyright"]           = "copyright.png",
-	["crop"]                = "crop.png",
-	["gamepad-2"]           = "gamepad-2.png",
-	["globe"]               = "globe.png",
-	["globe-2"]             = "globe-2.png",
-	["inspect"]             = "inspect.png",
-	["log-in"]              = "log-in.png",
-	["log-out"]             = "log-out.png",
-	["package"]             = "package-2.png",
-	["palette"]             = "palette.png",
-	["plane"]               = "plane.png",
-	["wrench"]              = "wrench.png",
-	["circle"]              = "circle.png",
-	["circle-dot"]          = "circle-dot.png",
-	["circle-ellipsis"]     = "circle-ellipsis.png",
-	["circle-slashed"]      = "circle-slashed.png",
-	["box"]                 = "box.png",
-	["boxes"]               = "boxes.png",
-	["box-select"]          = "box-select.png",
-	["alert-octagon"]       = "alert-octagon.png",
+	["accessibility"]       = "rbxassetid://86577806044774",
+	["activity"]            = "rbxassetid://124718278159062",
+	["alarm-check"]         = "rbxassetid://88443439659882",
+	["alarm-clock"]         = "rbxassetid://94254533292407",
+	["alarm-clock-off"]     = "rbxassetid://76522020859435",
+	["alarm-minus"]         = "rbxassetid://103224203864320",
+	["alarm-plus"]          = "rbxassetid://112903777535386",
+	["alert-circle"]        = "rbxassetid://96622501885182",
+	["alert-octagon"]       = "rbxassetid://113153027306372",
+	["alert-triangle"]      = "rbxassetid://97614016517317",
+	["arrow-big-left"]      = "rbxassetid://81223172012895",
+	["arrow-big-right"]     = "rbxassetid://95946185689958",
+	["arrow-big-up"]        = "rbxassetid://110679523642425",
+	["arrow-down"]          = "rbxassetid://139934229465997",
+	["arrow-down-circle"]   = "rbxassetid://134115521696959",
+	["arrow-down-left"]     = "rbxassetid://132156409078786",
+	["arrow-down-right"]    = "rbxassetid://101572283920640",
+	["arrow-left"]          = "rbxassetid://117631502963585",
+	["arrow-left-circle"]   = "rbxassetid://85104103038704",
+	["arrow-left-right"]    = "rbxassetid://77726657456467",
+	["arrow-right"]         = "rbxassetid://91225393330210",
+	["arrow-right-circle"]  = "rbxassetid://129995786596546",
+	["arrow-up"]            = "rbxassetid://136210647857533",
+	["arrow-up-circle"]     = "rbxassetid://81985527791320",
+	["arrow-up-down"]       = "rbxassetid://82617685428039",
+	["arrow-up-left"]       = "rbxassetid://124145629940318",
+	["arrow-up-right"]      = "rbxassetid://132200403964480",
+	["baseline"]            = "rbxassetid://74429010951903",
+	["bell"]                = "rbxassetid://131040003021065",
+	["bell-off"]            = "rbxassetid://137347611690315",
+	["bluetooth"]           = "rbxassetid://134275907691960",
+	["bomb"]                = "rbxassetid://106146379411030",
+	["bookmark"]            = "rbxassetid://78910713058457",
+	["bot"]                 = "rbxassetid://136025658665641",
+	["box"]                 = "rbxassetid://139127689990212",
+	["boxes"]               = "rbxassetid://87753198550689",
+	["box-select"]          = "rbxassetid://119473847007914",
+	["bug"]                 = "rbxassetid://75805800263350",
+	["bus"]                 = "rbxassetid://135687949432879",
+	["cake"]                = "rbxassetid://95676980372932",
+	["calendar"]            = "rbxassetid://76060491031137",
+	["camera"]              = "rbxassetid://100844908025390",
+	["check"]               = "rbxassetid://107610873117077",
+	["check-circle"]        = "rbxassetid://131590629416870",
+	["check-circle-2"]      = "rbxassetid://100658438766213",
+	["check-square"]        = "rbxassetid://122667727839512",
+	["chevron-down"]        = "rbxassetid://134991530011546",
+	["chevron-first"]       = "rbxassetid://87209392159574",
+	["chevron-last"]        = "rbxassetid://127722664350171",
+	["chevron-left"]        = "rbxassetid://77853814810743",
+	["chevron-right"]       = "rbxassetid://116254008577770",
+	["chevrons-down"]       = "rbxassetid://134841329010524",
+	["chevrons-down-up"]    = "rbxassetid://91792392983584",
+	["chevrons-left"]       = "rbxassetid://116929636987016",
+	["chevrons-left-right"] = "rbxassetid://122710881836088",
+	["chevrons-right"]      = "rbxassetid://106649254766552",
+	["chevrons-right-left"] = "rbxassetid://107654049585383",
+	["chevrons-up"]         = "rbxassetid://111874102387214",
+	["chevrons-up-down"]    = "rbxassetid://82898921713890",
+	["chevron-up"]          = "rbxassetid://81789844454964",
+	["circle"]              = "rbxassetid://118057098979863",
+	["circle-dot"]          = "rbxassetid://118839761100554",
+	["circle-ellipsis"]     = "rbxassetid://74821046526800",
+	["circle-slashed"]      = "rbxassetid://116094741323493",
+	["clipboard"]           = "rbxassetid://113289884390452",
+	["clipboard-check"]     = "rbxassetid://95988127941813",
+	["clipboard-copy"]      = "rbxassetid://118644028963638",
+	["clipboard-x"]         = "rbxassetid://105062056111571",
+	["clock"]               = "rbxassetid://120194987523679",
+	["cloud"]               = "rbxassetid://71740362790765",
+	["cloud-cog"]           = "rbxassetid://76741768619857",
+	["cloud-drizzle"]       = "rbxassetid://80627992420948",
+	["cloud-fog"]           = "rbxassetid://73646839819012",
+	["cloud-hail"]          = "rbxassetid://86963473578471",
+	["cloud-lightning"]     = "rbxassetid://77119516149315",
+	["cloud-moon"]          = "rbxassetid://135943620257187",
+	["cloud-moon-rain"]     = "rbxassetid://121171976865905",
+	["cloud-off"]           = "rbxassetid://136396466736739",
+	["cloud-rain"]          = "rbxassetid://114457403773492",
+	["cloud-rain-wind"]     = "rbxassetid://94901778292323",
+	["cloud-snow"]          = "rbxassetid://95733249447613",
+	["cloud-sun"]           = "rbxassetid://95344439777009",
+	["cloud-sun-rain"]      = "rbxassetid://135861500523518",
+	["cloudy"]              = "rbxassetid://138223049179345",
+	["clover"]              = "rbxassetid://101124990722172",
+	["code"]                = "rbxassetid://80057761961128",
+	["code-2"]              = "rbxassetid://74727274892893",
+	["coffee"]              = "rbxassetid://106208702026407",
+	["cog"]                 = "rbxassetid://102049722634534",
+	["command"]             = "rbxassetid://80885004913569",
+	["compass"]             = "rbxassetid://82282214088461",
+	["copy"]                = "rbxassetid://80677896670661",
+	["copyleft"]            = "rbxassetid://129334586665596",
+	["copyright"]           = "rbxassetid://128161242246995",
+	["corner-down-left"]    = "rbxassetid://100471957374022",
+	["corner-down-right"]   = "rbxassetid://120386526135649",
+	["corner-left-down"]    = "rbxassetid://127886445366427",
+	["corner-left-up"]      = "rbxassetid://129921597102415",
+	["corner-right-down"]   = "rbxassetid://91425519924359",
+	["corner-right-up"]     = "rbxassetid://132933357346568",
+	["corner-up-left"]      = "rbxassetid://97392992315106",
+	["corner-up-right"]     = "rbxassetid://95400510088753",
+	["cpu"]                 = "rbxassetid://114175929297028",
+	["crop"]                = "rbxassetid://138101739462516",
+	["crosshair"]           = "rbxassetid://99168526073704",
+	["database"]            = "rbxassetid://99244421515108",
+	["delete"]              = "rbxassetid://120164731780413",
+	["download"]            = "rbxassetid://116553827990388",
+	["download-cloud"]      = "rbxassetid://132699449873424",
+	["edit"]                = "rbxassetid://117419829725279",
+	["edit-2"]              = "rbxassetid://130538400147028",
+	["edit-3"]              = "rbxassetid://137315486129862",
+	["electricity"]         = "rbxassetid://93210576778058",
+	["electricity-off"]     = "rbxassetid://115468637194708",
+	["eraser"]              = "rbxassetid://138787307190849",
+	["expand"]              = "rbxassetid://132641882147542",
+	["external-link"]       = "rbxassetid://128574553678689",
+	["eye"]                 = "rbxassetid://70643287021568",
+	["eye-off"]             = "rbxassetid://104057296344988",
+	["file"]                = "rbxassetid://80713255430986",
+	["filter"]              = "rbxassetid://120397209454067",
+	["fingerprint"]         = "rbxassetid://129004334305138",
+	["flag"]                = "rbxassetid://93898795081107",
+	["flame"]               = "rbxassetid://102692696988821",
+	["focus"]               = "rbxassetid://118704633596060",
+	["folder"]              = "rbxassetid://88470693133086",
+	["folder-open"]         = "rbxassetid://109979142447482",
+	["forward"]             = "rbxassetid://109223581546267",
+	["gamepad-2"]           = "rbxassetid://113912432145082",
+	["gem"]                 = "rbxassetid://122039614231973",
+	["globe"]               = "rbxassetid://106045997668731",
+	["globe-2"]             = "rbxassetid://75392059901643",
+	["grid"]                = "rbxassetid://92374808665407",
+	["hard-drive"]          = "rbxassetid://115874719417252",
+	["heart"]               = "rbxassetid://90843982238327",
+	["home"]                = "rbxassetid://138336007807517",
+	["image"]               = "rbxassetid://77526753811349",
+	["import"]              = "rbxassetid://75834207260490",
+	["inbox"]               = "rbxassetid://71024142770099",
+	["info"]                = "rbxassetid://117540852833261",
+	["inspect"]             = "rbxassetid://138752306955980",
+	["key"]                 = "rbxassetid://111741478621082",
+	["layers"]              = "rbxassetid://103897702316342",
+	["layout"]              = "rbxassetid://91157288604829",
+	["lightbulb"]           = "rbxassetid://133504269053111",
+	["lightbulb-off"]       = "rbxassetid://132933746573531",
+	["link"]                = "rbxassetid://91755181673292",
+	["link-2"]              = "rbxassetid://74021297508234",
+	["link-2-off"]          = "rbxassetid://126457611273268",
+	["list"]                = "rbxassetid://120952307270177",
+	["list-ordered"]        = "rbxassetid://105928960530744",
+	["loader"]              = "rbxassetid://123787715187262",
+	["loader-2"]            = "rbxassetid://86745900648098",
+	["locate"]              = "rbxassetid://124835736755248",
+	["locate-fixed"]        = "rbxassetid://77799747163687",
+	["locate-off"]          = "rbxassetid://129731313283874",
+	["lock"]                = "rbxassetid://79181521386751",
+	["log-in"]              = "rbxassetid://121939047633490",
+	["log-out"]             = "rbxassetid://98799638707366",
+	["mail"]                = "rbxassetid://74446122154871",
+	["mail-open"]           = "rbxassetid://97988002799152",
+	["map"]                 = "rbxassetid://131779848774014",
+	["maximize"]            = "rbxassetid://102609613179535",
+	["maximize-2"]          = "rbxassetid://104419143262459",
+	["menu"]                = "rbxassetid://131640836630622",
+	["message-circle"]      = "rbxassetid://116748128282489",
+	["message-square"]      = "rbxassetid://92232291277528",
+	["mic"]                 = "rbxassetid://98706476785764",
+	["minimize"]            = "rbxassetid://85911469421154",
+	["minimize-2"]          = "rbxassetid://83600993144823",
+	["minus"]               = "rbxassetid://80246713190225",
+	["minus-circle"]        = "rbxassetid://93975848047961",
+	["moon"]                = "rbxassetid://76518168921057",
+	["mouse-pointer-2"]     = "rbxassetid://133711156120534",
+	["mouse-pointer-click"] = "rbxassetid://108242866587681",
+	["move-diagonal"]       = "rbxassetid://104780697639568",
+	["move-diagonal-2"]     = "rbxassetid://88176512596821",
+	["move-horizontal"]     = "rbxassetid://95717649021380",
+	["move-vertical"]       = "rbxassetid://97622192561014",
+	["navigation"]          = "rbxassetid://91453827974577",
+	["navigation-2"]        = "rbxassetid://78053127601414",
+	["package-2"]           = "rbxassetid://97611761627313",
+	["palette"]             = "rbxassetid://109728443966747",
+	["pause"]               = "rbxassetid://101809803158620",
+	["phone"]               = "rbxassetid://93265716389607",
+	["pin"]                 = "rbxassetid://138066191106147",
+	["plane"]               = "rbxassetid://124671733529020",
+	["play"]                = "rbxassetid://119128870764318",
+	["plus"]                = "rbxassetid://84773826668367",
+	["plus-circle"]         = "rbxassetid://135411796054975",
+	["plus-square"]         = "rbxassetid://124672515362224",
+	["power"]               = "rbxassetid://117635692765522",
+	["power-off"]           = "rbxassetid://74561409634907",
+	["redo"]                = "rbxassetid://116612808946891",
+	["redo-2"]              = "rbxassetid://81159750535217",
+	["refresh-cw"]          = "rbxassetid://98911090401219",
+	["rocket"]              = "rbxassetid://100389968772950",
+	["rss"]                 = "rbxassetid://73598987277411",
+	["save"]                = "rbxassetid://126940374970901",
+	["scissors"]            = "rbxassetid://94330181158930",
+	["scroll"]              = "rbxassetid://108768581027484",
+	["search"]              = "rbxassetid://72934798326215",
+	["send"]                = "rbxassetid://102039923302634",
+	["separator-horizontal"] = "rbxassetid://84037801088900",
+	["separator-vertical"]  = "rbxassetid://76761978346006",
+	["server"]              = "rbxassetid://75664757798446",
+	["server-cog"]          = "rbxassetid://112101645533047",
+	["server-crash"]        = "rbxassetid://95014747967844",
+	["server-off"]          = "rbxassetid://96514009352888",
+	["settings"]            = "rbxassetid://79890103097863",
+	["settings-2"]          = "rbxassetid://82905434058372",
+	["share"]               = "rbxassetid://104215879677241",
+	["share-2"]             = "rbxassetid://85970485067799",
+	["shield"]              = "rbxassetid://100583216763036",
+	["shield-alert"]        = "rbxassetid://101107939984909",
+	["shield-check"]        = "rbxassetid://83945529674378",
+	["shield-close"]        = "rbxassetid://70747059868313",
+	["signal"]              = "rbxassetid://97450412129258",
+	["signal-high"]         = "rbxassetid://80489472999566",
+	["signal-low"]          = "rbxassetid://94129075854090",
+	["signal-medium"]       = "rbxassetid://137194189683381",
+	["signal-zero"]         = "rbxassetid://103589719885970",
+	["skull"]               = "rbxassetid://87577090489900",
+	["sliders"]             = "rbxassetid://70907897856504",
+	["sliders-horizontal"]  = "rbxassetid://85574415403603",
+	["snowflake"]           = "rbxassetid://98461691859013",
+	["sort-asc"]            = "rbxassetid://97393324013895",
+	["sort-desc"]           = "rbxassetid://116689671729402",
+	["star"]                = "rbxassetid://82225115058136",
+	["sun"]                 = "rbxassetid://87196039593436",
+	["sun-dim"]             = "rbxassetid://82479408651247",
+	["sword"]               = "rbxassetid://117377912184895",
+	["tag"]                 = "rbxassetid://73721513610706",
+	["target"]              = "rbxassetid://120285992980806",
+	["terminal"]            = "rbxassetid://81304759954068",
+	["toggle-left"]         = "rbxassetid://113627064803722",
+	["toggle-right"]        = "rbxassetid://91074620164539",
+	["trash"]               = "rbxassetid://108651825728242",
+	["trash-2"]             = "rbxassetid://93063159653818",
+	["undo"]                = "rbxassetid://110861533873400",
+	["undo-2"]              = "rbxassetid://83375010801060",
+	["unlink"]              = "rbxassetid://117628557697253",
+	["unlink-2"]            = "rbxassetid://140061988553151",
+	["unlock"]              = "rbxassetid://88334597212605",
+	["upload"]              = "rbxassetid://74526262584750",
+	["user"]                = "rbxassetid://118393671216197",
+	["user-check"]          = "rbxassetid://91119519400562",
+	["user-minus"]          = "rbxassetid://97525341351869",
+	["user-plus"]           = "rbxassetid://100808708500441",
+	["users"]               = "rbxassetid://119735248132144",
+	["verified"]            = "rbxassetid://99405098419465",
+	["volume"]              = "rbxassetid://111014035867813",
+	["wand"]                = "rbxassetid://103768858355562",
+	["wifi"]                = "rbxassetid://85799223133613",
+	["wifi-off"]            = "rbxassetid://71001250643809",
+	["wrench"]              = "rbxassetid://75589939739234",
+	["x"]                   = "rbxassetid://89000014910130",
+	["x-circle"]            = "rbxassetid://70409904155359",
+	["zoom-in"]             = "rbxassetid://129061738536125",
+	["zoom-out"]            = "rbxassetid://89279935586876",
 }
-
---// Base URL setter (call before CreateWindow if you self-host)
-function NovaLib:SetIconBaseURL(url)
-	ICON_BASE_URL = url
-end
 
 function NovaLib:GetIcon(name)
 	if not name then return nil end
@@ -458,9 +484,7 @@ function NovaLib:GetIcon(name)
 	if name:sub(1, 4) == "http" or name:sub(1, 7) == "rbxasset" then
 		return name
 	end
-	local filename = NovaLib.Icons[name]
-	if not filename then return nil end
-	return ICON_BASE_URL .. filename
+	return NovaLib.Icons[name]
 end
 
 
@@ -609,7 +633,11 @@ local function CreateIcon(parent, iconName, color, size)
 	return img
 end
 
---// Config saving ------------------------------------------------------------
+
+
+
+--// File: src/Managers/SaveManager.lua //--
+--// Config saving / loading manager -------------------------------------------
 
 local ConfigFolder = "NovaLib"
 
@@ -652,6 +680,64 @@ function NovaLib:LoadConfig(name, applyCallbacks)
 		end
 	end
 	return data
+end
+
+
+--// File: src/Managers/InterfaceManager.lua //--
+--// Interface theme and settings manager -------------------------------------
+
+function WindowProto:SetTheme(name)
+	local newTheme = NovaLib.Themes[name]
+	if not newTheme then return end
+	local oldTheme = Theme
+	Theme = newTheme
+
+	local map = {}
+	for key, color in pairs(oldTheme) do
+		if typeof(color) == "Color3" then
+			map[tostring(color)] = key
+		end
+	end
+
+	local function Remap(color)
+		local key = map[tostring(color)]
+		return key and newTheme[key] or nil
+	end
+
+	for _, obj in ipairs(self.Gui:GetDescendants()) do
+		pcall(function()
+			if obj:IsA("GuiObject") then
+				local bg = Remap(obj.BackgroundColor3)
+				if bg then obj.BackgroundColor3 = bg end
+			end
+			if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+				local tc = Remap(obj.TextColor3)
+				if tc then obj.TextColor3 = tc end
+			end
+			if obj:IsA("ImageLabel") then
+				local ic = Remap(obj.ImageColor3)
+				if ic then obj.ImageColor3 = ic end
+			end
+			if obj:IsA("TextBox") then
+				local pc = Remap(obj.PlaceholderColor3)
+				if pc then obj.PlaceholderColor3 = pc end
+			end
+			if obj:IsA("UIStroke") then
+				local sc = Remap(obj.Color)
+				if sc then obj.Color = sc end
+			end
+			if obj:IsA("ScrollingFrame") then
+				local sb = Remap(obj.ScrollBarImageColor3)
+				if sb then obj.ScrollBarImageColor3 = sb end
+			end
+		end)
+	end
+
+	NovaLib:Notify({
+		Title = "Theme",
+		Content = "Theme set to " .. name .. ".",
+		Type = "Info",
+	})
 end
 
 
@@ -721,8 +807,40 @@ local function PlayIntro(titleText, _subText)
 end
 
 
---// File: src/Notifications.lua //--
---// Notifications ------------------------------------------------------------
+--// File: src/Components/Element.lua //--
+--// Element Base Helpers --------------------------------------------------------
+
+local function ElementBase(page, height)
+	local frame = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, height),
+		BackgroundColor3 = Theme.Secondary,
+		Parent = page,
+	})
+	Round(frame, 9)
+	Stroke(frame, Theme.Stroke, 1, 0.4)
+	Sheen(frame, 0.03)
+	return frame
+end
+
+local function ElementTitle(parent, text, widthOffset)
+	return Create("TextLabel", {
+		Size = UDim2.new(1, widthOffset or -70, 1, 0),
+		Position = UDim2.new(0, 14, 0, 0),
+		BackgroundTransparency = 1,
+		FontFace = NovaLib.Fonts.Medium,
+		Text = text,
+		TextColor3 = Theme.Text,
+		TextSize = 14,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Center,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		Parent = parent,
+	})
+end
+
+
+--// File: src/Components/Notification.lua //--
+--// Notification Component ----------------------------------------------------
 
 local NotifyGui, NotifyHolder
 
@@ -740,7 +858,7 @@ local function EnsureNotifyGui()
 		Name = "Holder",
 		AnchorPoint = Vector2.new(1, 1),
 		Position = UDim2.new(1, -24, 1, -24),
-		Size = UDim2.new(0, 280, 1, -48),
+		Size = UDim2.new(0, 300, 1, -48),
 		BackgroundTransparency = 1,
 		Parent = NotifyGui,
 	}, {
@@ -778,7 +896,7 @@ function NovaLib:Notify(options)
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Position = UDim2.new(1.2, 0, 0, 0), -- slide offscreen initially
 		BackgroundColor3 = Theme.Secondary,
-		BackgroundTransparency = 0.25, -- glass card toast look
+		BackgroundTransparency = 0.05, -- solid feel background
 		Parent = wrapper,
 	})
 	Round(card, 8)
@@ -801,9 +919,10 @@ function NovaLib:Notify(options)
 		iconName = "alert-triangle"
 	end
 
+	-- Accent bar starts with absolute height, updated by property changed signal
 	local accentBar = Create("Frame", {
 		Name = "AccentBar",
-		Size = UDim2.new(0, 4, 1, 0),
+		Size = UDim2.new(0, 4, 0, 0),
 		Position = UDim2.new(0, 0, 0, 0),
 		BackgroundColor3 = typeColor,
 		BorderSizePixel = 0,
@@ -861,9 +980,9 @@ function NovaLib:Notify(options)
 		icon.Position = UDim2.new(0.5, 0, 0.5, 0)
 	end
 
-	-- Text frame containing title & description
+	-- Text frame containing title & description (leave space for close button: -54)
 	local textFrame = Create("Frame", {
-		Size = UDim2.new(1, -36, 0, 0),
+		Size = UDim2.new(1, -54, 0, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundTransparency = 1,
 		LayoutOrder = 2,
@@ -906,52 +1025,98 @@ function NovaLib:Notify(options)
 		})
 	end
 
+	-- Timed progress bar at the bottom
+	local progressBar = Create("Frame", {
+		Name = "ProgressBar",
+		Size = UDim2.new(1, 0, 0, 2),
+		Position = UDim2.new(0, 0, 1, -2),
+		BackgroundColor3 = typeColor,
+		BorderSizePixel = 0,
+		ZIndex = 3,
+		Parent = card,
+	})
+	Round(progressBar, 1)
+
+	-- Hover detection
+	local isHovered = false
+	card.MouseEnter:Connect(function()
+		isHovered = true
+	end)
+	card.MouseLeave:Connect(function()
+		isHovered = false
+	end)
+
+	-- Keep accentBar and shadow sizes in sync with card's dynamic layout height
+	card:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		accentBar.Size = UDim2.new(0, 4, 0, card.AbsoluteSize.Y)
+		shadow.Size = UDim2.new(0, card.AbsoluteSize.X, 0, card.AbsoluteSize.Y)
+	end)
+
 	-- Slide & Fade In
 	Tween(card, { Position = UDim2.new(0, 0, 0, 0) }, 0.4, Enum.EasingStyle.Quint)
 	Tween(shadow, { Position = UDim2.new(0, 2, 0, 2) }, 0.4, Enum.EasingStyle.Quint)
 
-	-- Hold, then Slide & Fade Out
-	task.delay(duration, function()
+	-- Close Dismiss Function
+	local connection
+	local function Dismiss()
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
 		Tween(card, { Position = UDim2.new(1.2, 0, 0, 0) }, 0.35, Enum.EasingStyle.Quint)
 		Tween(shadow, { Position = UDim2.new(1.2, 2, 0, 2) }, 0.35, Enum.EasingStyle.Quint)
 		task.wait(0.4)
 		wrapper:Destroy()
+	end
+
+	-- Absolute positioned Dismiss/Close Button
+	local dismissBtn = Create("TextButton", {
+		Name = "DismissBtn",
+		Size = UDim2.new(0, 16, 0, 16),
+		Position = UDim2.new(1, -22, 0, 8),
+		BackgroundTransparency = 1,
+		Text = "",
+		ZIndex = 4,
+		AutoButtonColor = false,
+		Parent = card,
+	})
+	local dismissIcon = CreateIcon(dismissBtn, "x", Theme.SubText, 10)
+	if dismissIcon then
+		dismissIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+		dismissIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+	end
+
+	dismissBtn.MouseEnter:Connect(function()
+		if dismissIcon then Tween(dismissIcon, { ImageColor3 = Theme.Text }, 0.15) end
+	end)
+	dismissBtn.MouseLeave:Connect(function()
+		if dismissIcon then Tween(dismissIcon, { ImageColor3 = Theme.SubText }, 0.15) end
+	end)
+	dismissBtn.MouseButton1Click:Connect(Dismiss)
+
+	-- Auto-dismiss loop with hover pause and progress bar update
+	local totalTime = duration
+	local timeLeft = duration
+	connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
+		if not card or not card.Parent then
+			if connection then connection:Disconnect() end
+			return
+		end
+		if not isHovered then
+			timeLeft = timeLeft - dt
+			progressBar.Size = UDim2.new(math.clamp(timeLeft / totalTime, 0, 1), 0, 0, 2)
+			if timeLeft <= 0 then
+				if connection then connection:Disconnect() end
+				Dismiss()
+			end
+		end
 	end)
 end
 
 
---// File: src/ElementsBase.lua //--
---// Element Base Helpers + Section, Label, Paragraph, Button -----------------
+--// File: src/Components/Section.lua //--
+--// Section Component ---------------------------------------------------------
 
-local function ElementBase(page, height)
-	local frame = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, height),
-		BackgroundColor3 = Theme.Secondary,
-		Parent = page,
-	})
-	Round(frame, 9)
-	Stroke(frame, Theme.Stroke, 1, 0.4)
-	Sheen(frame, 0.03)
-	return frame
-end
-
-local function ElementTitle(parent, text, widthOffset)
-	return Create("TextLabel", {
-		Size = UDim2.new(1, widthOffset or -70, 1, 0),
-		Position = UDim2.new(0, 14, 0, 0),
-		BackgroundTransparency = 1,
-		FontFace = NovaLib.Fonts.Medium,
-		Text = text,
-		TextColor3 = Theme.Text,
-		TextSize = 14,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextYAlignment = Enum.TextYAlignment.Center,
-		TextTruncate = Enum.TextTruncate.AtEnd,
-		Parent = parent,
-	})
-end
-
---// Section (accent pill + title + divider line)
 function Tab:CreateSection(text)
 	local page = self.Page
 	local window = self.Window
@@ -1005,99 +1170,14 @@ function Tab:CreateSection(text)
 	return holder
 end
 
---// Label (auto-height, wraps long text cleanly)
-function Tab:CreateLabel(text)
-	local page = self.Page
-	local frame = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundColor3 = Theme.Secondary,
-		Parent = page,
-	})
-	Round(frame, 9)
-	Stroke(frame, Theme.Stroke, 1, 0.4)
-	Create("UIPadding", {
-		PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10),
-		PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14),
-		Parent = frame,
-	})
 
-	local label = Create("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		FontFace = NovaLib.Fonts.Medium,
-		Text = text,
-		TextColor3 = Theme.Text,
-		TextSize = 14,
-		TextWrapped = true,
-		RichText = true,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Parent = frame,
-	})
+--// File: src/Elements/init.lua //--
+--// Tab Elements -------------------------------------------------------------
 
-	local Label = {}
-	function Label:Set(newText) label.Text = newText end
-	return Label
-end
 
---// Paragraph
-function Tab:CreateParagraph(pOptions)
-	pOptions = pOptions or {}
-	local page = self.Page
-	local frame = Create("Frame", {
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundColor3 = Theme.Secondary,
-		Parent = page,
-	})
-	Round(frame, 9)
-	Stroke(frame, Theme.Stroke, 1, 0.4)
-	Sheen(frame, 0.03)
-	Create("UIPadding", {
-		PaddingTop = UDim.new(0, 12), PaddingBottom = UDim.new(0, 12),
-		PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14),
-		Parent = frame,
-	})
-	Create("UIListLayout", {
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		Padding = UDim.new(0, 5),
-		Parent = frame,
-	})
-	local titleL = Create("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 16),
-		BackgroundTransparency = 1,
-		FontFace = NovaLib.Fonts.Bold,
-		Text = pOptions.Title or "Paragraph",
-		TextColor3 = Theme.Text,
-		TextSize = 14,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		LayoutOrder = 1,
-		Parent = frame,
-	})
-	local bodyL = Create("TextLabel", {
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		FontFace = NovaLib.Fonts.Body,
-		Text = pOptions.Content or "",
-		TextColor3 = Theme.SubText,
-		TextSize = 13,
-		TextWrapped = true,
-		LineHeight = 1.25,
-		TextXAlignment = Enum.TextXAlignment.Left,
-		LayoutOrder = 2,
-		Parent = frame,
-	})
-	local Paragraph = {}
-	function Paragraph:Set(t, c)
-		if t then titleL.Text = t end
-		if c then bodyL.Text = c end
-	end
-	return Paragraph
-end
+--// File: src/Elements/Button.lua //--
+--// Button Element -----------------------------------------------------------
 
---// Button (icon support)
 function Tab:CreateButton(bOptions)
 	bOptions = bOptions or {}
 	local page = self.Page
@@ -1176,10 +1256,103 @@ function Tab:CreateButton(bOptions)
 end
 
 
---// File: src/ElementsInput.lua //--
---// Toggle & Slider ----------------------------------------------------------
+--// File: src/Elements/Paragraph.lua //--
+--// Paragraph & Label Elements -----------------------------------------------
 
---// Toggle
+function Tab:CreateLabel(text)
+	local page = self.Page
+	local frame = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = Theme.Secondary,
+		Parent = page,
+	})
+	Round(frame, 9)
+	Stroke(frame, Theme.Stroke, 1, 0.4)
+	Create("UIPadding", {
+		PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10),
+		PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14),
+		Parent = frame,
+	})
+
+	local label = Create("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		FontFace = NovaLib.Fonts.Medium,
+		Text = text,
+		TextColor3 = Theme.Text,
+		TextSize = 14,
+		TextWrapped = true,
+		RichText = true,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = frame,
+	})
+
+	local Label = {}
+	function Label:Set(newText) label.Text = newText end
+	return Label
+end
+
+function Tab:CreateParagraph(pOptions)
+	pOptions = pOptions or {}
+	local page = self.Page
+	local frame = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = Theme.Secondary,
+		Parent = page,
+	})
+	Round(frame, 9)
+	Stroke(frame, Theme.Stroke, 1, 0.4)
+	Sheen(frame, 0.03)
+	Create("UIPadding", {
+		PaddingTop = UDim.new(0, 12), PaddingBottom = UDim.new(0, 12),
+		PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14),
+		Parent = frame,
+	})
+	Create("UIListLayout", {
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		Padding = UDim.new(0, 5),
+		Parent = frame,
+	})
+	local titleL = Create("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 16),
+		BackgroundTransparency = 1,
+		FontFace = NovaLib.Fonts.Bold,
+		Text = pOptions.Title or "Paragraph",
+		TextColor3 = Theme.Text,
+		TextSize = 14,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		LayoutOrder = 1,
+		Parent = frame,
+	})
+	local bodyL = Create("TextLabel", {
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		FontFace = NovaLib.Fonts.Body,
+		Text = pOptions.Content or "",
+		TextColor3 = Theme.SubText,
+		TextSize = 13,
+		TextWrapped = true,
+		LineHeight = 1.25,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		LayoutOrder = 2,
+		Parent = frame,
+	})
+	local Paragraph = {}
+	function Paragraph:Set(t, c)
+		if t then titleL.Text = t end
+		if c then bodyL.Text = c end
+	end
+	return Paragraph
+end
+
+
+--// File: src/Elements/Toggle.lua //--
+--// Toggle Element ------------------------------------------------------------
+
 function Tab:CreateToggle(tOptions)
 	tOptions = tOptions or {}
 	local page = self.Page
@@ -1206,6 +1379,10 @@ function Tab:CreateToggle(tOptions)
 		Parent = switch,
 	})
 	Round(knob, 8)
+	local knobScale = Create("UIScale", {
+		Scale = 1,
+		Parent = knob,
+	})
 
 	local clickArea = Create("TextButton", {
 		Size = UDim2.new(1, 0, 1, 0),
@@ -1225,6 +1402,12 @@ function Tab:CreateToggle(tOptions)
 			Position = state and UDim2.new(1, -19, 0.5, -8) or UDim2.new(0, 3, 0.5, -8),
 			BackgroundColor3 = state and Color3.fromRGB(255, 255, 255) or Theme.SubText,
 		}, 0.25, Enum.EasingStyle.Circular)
+		
+		-- Knob pop tactile animation
+		Tween(knobScale, { Scale = 1.25 }, 0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		task.delay(0.1, function()
+			Tween(knobScale, { Scale = 1.0 }, 0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+		end)
 	end
 
 	local function Set(value)
@@ -1262,7 +1445,10 @@ function Tab:CreateToggle(tOptions)
 	return Toggle
 end
 
---// Slider
+
+--// File: src/Elements/Slider.lua //--
+--// Slider Element ------------------------------------------------------------
+
 function Tab:CreateSlider(sOptions)
 	sOptions = sOptions or {}
 	local page = self.Page
@@ -1400,10 +1586,9 @@ function Tab:CreateSlider(sOptions)
 end
 
 
---// File: src/ElementsSelect.lua //--
---// Dropdown, Input, Keybind, ColorPicker ------------------------------------
+--// File: src/Elements/Dropdown.lua //--
+--// Dropdown Element ----------------------------------------------------------
 
---// Dropdown
 function Tab:CreateDropdown(dOptions)
 	dOptions = dOptions or {}
 	local page = self.Page
@@ -1633,7 +1818,10 @@ function Tab:CreateDropdown(dOptions)
 	return Dropdown
 end
 
---// TextBox / Input
+
+--// File: src/Elements/Input.lua //--
+--// Input (TextBox) Element ---------------------------------------------------
+
 function Tab:CreateInput(iOptions)
 	iOptions = iOptions or {}
 	local page = self.Page
@@ -1699,7 +1887,10 @@ function Tab:CreateInput(iOptions)
 	return Input
 end
 
---// Keybind
+
+--// File: src/Elements/Keybind.lua //--
+--// Keybind Element -----------------------------------------------------------
+
 function Tab:CreateKeybind(kOptions)
 	kOptions = kOptions or {}
 	local page = self.Page
@@ -1757,7 +1948,10 @@ function Tab:CreateKeybind(kOptions)
 	return Keybind
 end
 
---// Color Picker (RGB sliders)
+
+--// File: src/Elements/Colorpicker.lua //--
+--// Color Picker Element (RGB sliders) ----------------------------------------
+
 function Tab:CreateColorPicker(cOptions)
 	cOptions = cOptions or {}
 	local page = self.Page
@@ -1934,8 +2128,144 @@ function Tab:CreateColorPicker(cOptions)
 end
 
 
---// File: src/Window.lua //--
---// Window and Tab Logic ------------------------------------------------------
+--// File: src/Components/Tab.lua //--
+--// Tab Creation Component ---------------------------------------------------
+
+function WindowProto:CreateTab(tabOptions)
+	tabOptions = tabOptions or {}
+	local tabName = tabOptions.Name or "Tab"
+
+	local TabObj = setmetatable({}, Tab)
+	TabObj.Name = tabName
+	TabObj.Window = self
+
+	local tabButton = Create("TextButton", {
+		Size = UDim2.new(1, 0, 0, 34),
+		BackgroundColor3 = Theme.Tertiary,
+		BackgroundTransparency = 1,
+		Text = "",
+		AutoButtonColor = false,
+		Parent = self.TabList,
+	})
+	Round(tabButton, 8)
+
+	local indicator = Create("Frame", {
+		Size = UDim2.new(0, 3, 0, 0),
+		Position = UDim2.new(0, 3, 0.5, 0),
+		AnchorPoint = Vector2.new(0, 0.5),
+		BackgroundColor3 = Theme.Accent,
+		Parent = tabButton,
+	})
+	Round(indicator, 2)
+
+	-- Optional customizable tab icon from Lucide
+	local tabIconId = tabOptions.Icon and NovaLib:GetIcon(tabOptions.Icon) or nil
+	local tabLabelOffset = 14
+	local tabIconImg
+	if tabIconId then
+		tabLabelOffset = 36
+		tabIconImg = Create("ImageLabel", {
+			Name = "TabIcon",
+			Size = UDim2.new(0, 16, 0, 16),
+			Position = UDim2.new(0, 14, 0.5, -8),
+			BackgroundTransparency = 1,
+			Image = tabIconId,
+			ImageColor3 = Theme.SubText,
+			Parent = tabButton,
+		})
+	end
+
+	local tabLabel = Create("TextLabel", {
+		Size = UDim2.new(1, -tabLabelOffset - 10, 1, 0),
+		Position = UDim2.new(0, tabLabelOffset, 0, 0),
+		BackgroundTransparency = 1,
+		FontFace = NovaLib.Fonts.Medium,
+		Text = tabName,
+		TextColor3 = Theme.SubText,
+		TextSize = 14,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		Parent = tabButton,
+	})
+
+	local page = Create("ScrollingFrame", {
+		Name = tabName,
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		ScrollBarThickness = 4,
+		ScrollBarImageTransparency = 0.5,
+		ScrollBarImageColor3 = Theme.StrokeLight,
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		CanvasSize = UDim2.new(0, 0, 0, 0),
+		Visible = false,
+		Parent = self.Content,
+	}, {
+		Create("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 8),
+		}),
+		Create("UIPadding", {
+			PaddingRight = UDim.new(0, 6),
+			PaddingBottom = UDim.new(0, 6),
+		}),
+	})
+
+	local function Activate()
+		for _, other in ipairs(self.Tabs) do
+			other.Page.Visible = false
+			other.Button.BackgroundTransparency = 1
+			Tween(other.Label, { TextColor3 = Theme.SubText }, 0.2)
+			Tween(other.Indicator, { Size = UDim2.new(0, 3, 0, 0) }, 0.2)
+			if other.IconImage then
+				Tween(other.IconImage, { ImageColor3 = Theme.SubText }, 0.2)
+			end
+		end
+		page.Visible = true
+		self.ActiveTab = TabObj
+		tabButton.BackgroundTransparency = 0
+		Tween(tabLabel, { TextColor3 = Theme.Text }, 0.2)
+		Tween(indicator, { Size = UDim2.new(0, 3, 1, -10) }, 0.25)
+		if tabIconImg then
+			Tween(tabIconImg, { ImageColor3 = Theme.Text }, 0.25)
+		end
+	end
+
+	tabButton.MouseButton1Click:Connect(Activate)
+	tabButton.MouseEnter:Connect(function()
+		if self.ActiveTab ~= TabObj then
+			Tween(tabLabel, { TextColor3 = Theme.Text }, 0.15)
+			if tabIconImg then
+				Tween(tabIconImg, { ImageColor3 = Theme.Text }, 0.15)
+			end
+		end
+	end)
+	tabButton.MouseLeave:Connect(function()
+		if self.ActiveTab ~= TabObj then
+			Tween(tabLabel, { TextColor3 = Theme.SubText }, 0.15)
+			if tabIconImg then
+				Tween(tabIconImg, { ImageColor3 = Theme.SubText }, 0.15)
+			end
+		end
+	end)
+
+	TabObj.Button = tabButton
+	TabObj.Label = tabLabel
+	TabObj.Indicator = indicator
+	TabObj.IconImage = tabIconImg
+	TabObj.Page = page
+	table.insert(self.Tabs, TabObj)
+
+	if #self.Tabs == 1 then
+		Activate()
+	end
+
+	return TabObj
+end
+
+
+--// File: src/Components/Window.lua //--
+--// Window Component -----------------------------------------------------------
 
 function NovaLib:CreateWindow(options)
 	options = options or {}
@@ -1945,15 +2275,21 @@ function NovaLib:CreateWindow(options)
 	local toggleKey = options.ToggleKey or Enum.KeyCode.RightControl
 	local showIntro = options.Intro ~= false
 
-	if NovaLib.Themes[themeName] then
+	if themeName == "Black" then
+		Theme = NovaLib.Themes.Darker
+	elseif themeName == "Midnight" then
+		Theme = NovaLib.Themes.Amethyst
+	elseif NovaLib.Themes[themeName] then
 		Theme = NovaLib.Themes[themeName]
+	else
+		Theme = NovaLib.Themes.Darker or NovaLib.Themes.Dark
 	end
 
 	if showIntro then
 		PlayIntro(windowTitle, options.IntroText or "Loading interface...")
 	end
 
-	local Window = {}
+	local Window = setmetatable({}, WindowProto)
 	Window.Tabs = {}
 	Window.ActiveTab = nil
 	Window.Minimized = false
@@ -1994,11 +2330,17 @@ function NovaLib:CreateWindow(options)
 		windowShadow.Size = main.Size
 	end))
 
+	local windowScale = Create("UIScale", {
+		Scale = 0.95,
+		Parent = main,
+	})
+
 	-- Open transition
 	Tween(main, {
 		Position = UDim2.new(0.5, 0, 0.5, 0),
 		GroupTransparency = 0,
 	}, 0.4, Enum.EasingStyle.Quint)
+	Tween(windowScale, { Scale = 1 }, 0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 	Tween(windowShadow, { BackgroundTransparency = 0.8 }, 0.45)
 
 	--// Top Bar
@@ -2054,13 +2396,16 @@ function NovaLib:CreateWindow(options)
 	})
 
 	-- Window control buttons (Close / Minimize) using Lucide assets
-	local function WindowButton(iconName, xOffset)
+	local function WindowButton(iconName, xOffset, fallbackText)
 		local btn = Create("TextButton", {
 			Size = UDim2.new(0, 28, 0, 28),
 			Position = UDim2.new(1, xOffset, 0.5, -14),
 			BackgroundColor3 = Theme.Tertiary,
 			BackgroundTransparency = 1,
-			Text = "",
+			Text = fallbackText or "",
+			FontFace = NovaLib.Fonts.Bold,
+			TextColor3 = Theme.SubText,
+			TextSize = 14,
 			AutoButtonColor = false,
 			Parent = topBar,
 		})
@@ -2068,18 +2413,19 @@ function NovaLib:CreateWindow(options)
 
 		local icon = CreateIcon(btn, iconName, Theme.SubText, 14)
 		if icon then
+			btn.Text = "" -- Hide text if icon loaded successfully
 			icon.AnchorPoint = Vector2.new(0.5, 0.5)
 			icon.Position = UDim2.new(0.5, 0, 0.5, 0)
 		end
 
 		btn.MouseEnter:Connect(function()
-			Tween(btn, { BackgroundTransparency = 0 }, 0.15)
+			Tween(btn, { BackgroundTransparency = 0, TextColor3 = Theme.Text }, 0.15)
 			if icon then
 				Tween(icon, { ImageColor3 = Theme.Text }, 0.15)
 			end
 		end)
 		btn.MouseLeave:Connect(function()
-			Tween(btn, { BackgroundTransparency = 1 }, 0.15)
+			Tween(btn, { BackgroundTransparency = 1, TextColor3 = Theme.SubText }, 0.15)
 			if icon then
 				Tween(icon, { ImageColor3 = Theme.SubText }, 0.15)
 			end
@@ -2087,16 +2433,17 @@ function NovaLib:CreateWindow(options)
 		return btn
 	end
 
-	local closeBtn = WindowButton("x", -38)
-	local minBtn = WindowButton("minus", -70)
+	local closeBtn = WindowButton("x", -38, "✕")
+	local minBtn = WindowButton("minus", -70, "—")
 
 	closeBtn.MouseButton1Click:Connect(function()
 		Tween(main, {
-			Position = main.Position + UDim2.new(0, 0, 0, 8),
+			Position = main.Position + UDim2.new(0, 0, 0, 20),
 			GroupTransparency = 1,
-		}, 0.3, Enum.EasingStyle.Quint)
+		}, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+		Tween(windowScale, { Scale = 0.92 }, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.In)
 		Tween(windowShadow, { BackgroundTransparency = 1 }, 0.3)
-		task.wait(0.35)
+		task.wait(0.38)
 		Window:Destroy()
 	end)
 
@@ -2106,12 +2453,69 @@ function NovaLib:CreateWindow(options)
 		if Window.Minimized then
 			storedSize = main.Size
 			Tween(main, { Size = UDim2.new(0, storedSize.X.Offset, 0, 44) }, 0.35)
+			local icon = minBtn:FindFirstChild("minusIcon") or minBtn:FindFirstChild("plusIcon")
+			if icon then
+				icon.Name = "plusIcon"
+				icon.Image = NovaLib:GetIcon("plus")
+			else
+				minBtn.Text = "+"
+			end
 		else
 			Tween(main, { Size = storedSize }, 0.35, Enum.EasingStyle.Back)
+			local icon = minBtn:FindFirstChild("plusIcon") or minBtn:FindFirstChild("minusIcon")
+			if icon then
+				icon.Name = "minusIcon"
+				icon.Image = NovaLib:GetIcon("minus")
+			else
+				minBtn.Text = "—"
+			end
 		end
 	end)
 
 	MakeDraggable(topBar, main, Window.Connections)
+
+	-- Window Resizing
+	local resizeHandle = Create("Frame", {
+		Name = "ResizeHandle",
+		Size = UDim2.new(0, 16, 0, 16),
+		Position = UDim2.new(1, -16, 1, -16),
+		BackgroundTransparency = 1,
+		ZIndex = 10,
+		Parent = main,
+	})
+	local resizeIcon = CreateIcon(resizeHandle, "move-diagonal-2", Theme.SubText, 10)
+	if resizeIcon then
+		resizeIcon.Position = UDim2.new(0.5, -5, 0.5, -5)
+	end
+
+	local resizing = false
+	local dragStart = Vector2.new()
+	local startSize = Vector2.new()
+
+	local resizeBegan = resizeHandle.InputBegan:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not Window.Minimized then
+			resizing = true
+			dragStart = input.Position
+			startSize = Vector2.new(main.Size.X.Offset, main.Size.Y.Offset)
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					resizing = false
+				end
+			end)
+		end
+	end)
+
+	local resizeChanged = UserInputService.InputChanged:Connect(function(input)
+		if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			local delta = input.Position - dragStart
+			local newX = math.max(450, startSize.X + delta.X)
+			local newY = math.max(300, startSize.Y + delta.Y)
+			main.Size = UDim2.new(0, newX, 0, newY)
+		end
+	end)
+
+	table.insert(Window.Connections, resizeBegan)
+	table.insert(Window.Connections, resizeChanged)
 
 	table.insert(Window.Connections, UserInputService.InputBegan:Connect(function(input, processed)
 		if processed then return end
@@ -2159,227 +2563,45 @@ function NovaLib:CreateWindow(options)
 		Parent = main,
 	})
 
-	--// Tab API
-	function Window:CreateTab(tabOptions)
-		tabOptions = tabOptions or {}
-		local tabName = tabOptions.Name or "Tab"
-
-		local TabObj = setmetatable({}, Tab)
-		TabObj.Name = tabName
-		TabObj.Window = Window
-
-		local tabButton = Create("TextButton", {
-			Size = UDim2.new(1, 0, 0, 34),
-			BackgroundColor3 = Theme.Tertiary,
-			BackgroundTransparency = 1,
-			Text = "",
-			AutoButtonColor = false,
-			Parent = tabList,
-		})
-		Round(tabButton, 8)
-
-		local indicator = Create("Frame", {
-			Size = UDim2.new(0, 3, 0, 0),
-			Position = UDim2.new(0, 3, 0.5, 0),
-			AnchorPoint = Vector2.new(0, 0.5),
-			BackgroundColor3 = Theme.Accent,
-			Parent = tabButton,
-		})
-		Round(indicator, 2)
-
-		-- Optional customizable tab icon from Lucide
-		local tabIconId = tabOptions.Icon and NovaLib:GetIcon(tabOptions.Icon) or nil
-		local tabLabelOffset = 14
-		local tabIconImg
-		if tabIconId then
-			tabLabelOffset = 36
-			tabIconImg = Create("ImageLabel", {
-				Name = "TabIcon",
-				Size = UDim2.new(0, 16, 0, 16),
-				Position = UDim2.new(0, 14, 0.5, -8),
-				BackgroundTransparency = 1,
-				Image = tabIconId,
-				ImageColor3 = Theme.SubText,
-				Parent = tabButton,
-			})
-		end
-
-		local tabLabel = Create("TextLabel", {
-			Size = UDim2.new(1, -tabLabelOffset - 10, 1, 0),
-			Position = UDim2.new(0, tabLabelOffset, 0, 0),
-			BackgroundTransparency = 1,
-			FontFace = NovaLib.Fonts.Medium,
-			Text = tabName,
-			TextColor3 = Theme.SubText,
-			TextSize = 14, -- Tab text size 14
-			TextXAlignment = Enum.TextXAlignment.Left,
-			TextTruncate = Enum.TextTruncate.AtEnd,
-			Parent = tabButton,
-		})
-
-		local page = Create("ScrollingFrame", {
-			Name = tabName,
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			ScrollBarThickness = 4,
-			ScrollBarImageTransparency = 0.5,
-			ScrollBarImageColor3 = Theme.StrokeLight,
-			AutomaticCanvasSize = Enum.AutomaticSize.Y,
-			CanvasSize = UDim2.new(0, 0, 0, 0),
-			Visible = false,
-			Parent = content,
-		}, {
-			Create("UIListLayout", {
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				Padding = UDim.new(0, 8),
-			}),
-			Create("UIPadding", {
-				PaddingRight = UDim.new(0, 6),
-				PaddingBottom = UDim.new(0, 6),
-			}),
-		})
-
-		local function Activate()
-			for _, other in ipairs(Window.Tabs) do
-				other.Page.Visible = false
-				other.Button.BackgroundTransparency = 1
-				Tween(other.Label, { TextColor3 = Theme.SubText }, 0.2)
-				Tween(other.Indicator, { Size = UDim2.new(0, 3, 0, 0) }, 0.2)
-				if other.IconImage then
-					Tween(other.IconImage, { ImageColor3 = Theme.SubText }, 0.2)
-				end
-			end
-			page.Visible = true
-			Window.ActiveTab = TabObj
-			tabButton.BackgroundTransparency = 0
-			Tween(tabLabel, { TextColor3 = Theme.Text }, 0.2)
-			Tween(indicator, { Size = UDim2.new(0, 3, 1, -10) }, 0.25)
-			if tabIconImg then
-				Tween(tabIconImg, { ImageColor3 = Theme.Text }, 0.25)
-			end
-		end
-
-		tabButton.MouseButton1Click:Connect(Activate)
-		tabButton.MouseEnter:Connect(function()
-			if Window.ActiveTab ~= TabObj then
-				Tween(tabLabel, { TextColor3 = Theme.Text }, 0.15)
-				if tabIconImg then
-					Tween(tabIconImg, { ImageColor3 = Theme.Text }, 0.15)
-				end
-			end
-		end)
-		tabButton.MouseLeave:Connect(function()
-			if Window.ActiveTab ~= TabObj then
-				Tween(tabLabel, { TextColor3 = Theme.SubText }, 0.15)
-				if tabIconImg then
-					Tween(tabIconImg, { ImageColor3 = Theme.SubText }, 0.15)
-				end
-			end
-		end)
-
-		TabObj.Button = tabButton
-		TabObj.Label = tabLabel
-		TabObj.Indicator = indicator
-		TabObj.IconImage = tabIconImg
-		TabObj.Page = page
-		table.insert(Window.Tabs, TabObj)
-
-		if #Window.Tabs == 1 then
-			Activate()
-		end
-
-		return TabObj
-	end
-
-	--// Window-level Helpers
-	function Window:Notify(opts) NovaLib:Notify(opts) end
-
-	function Window:SaveConfig(name)
-		local ok = NovaLib:SaveConfig(name or "default")
-		NovaLib:Notify({
-			Title = ok and "Config Saved" or "Save Failed",
-			Content = ok and ("Saved to " .. ConfigFolder .. "/" .. (name or "default") .. ".json")
-				or "Your executor does not support file functions.",
-			Type = ok and "Success" or "Error",
-		})
-		return ok
-	end
-
-	function Window:LoadConfig(name)
-		local data = NovaLib:LoadConfig(name or "default", Window.Callbacks)
-		NovaLib:Notify({
-			Title = data and "Config Loaded" or "Load Failed",
-			Content = data and "Your settings have been applied." or "No config found or executor unsupported.",
-			Type = data and "Success" or "Error",
-		})
-		return data
-	end
-
-	-- live theme switching remapping
-	function Window:SetTheme(name)
-		local newTheme = NovaLib.Themes[name]
-		if not newTheme then return end
-		local oldTheme = Theme
-		Theme = newTheme
-
-		local map = {}
-		for key, color in pairs(oldTheme) do
-			if typeof(color) == "Color3" then
-				map[tostring(color)] = key
-			end
-		end
-
-		local function Remap(color)
-			local key = map[tostring(color)]
-			return key and newTheme[key] or nil
-		end
-
-		for _, obj in ipairs(screenGui:GetDescendants()) do
-			pcall(function()
-				if obj:IsA("GuiObject") then
-					local bg = Remap(obj.BackgroundColor3)
-					if bg then obj.BackgroundColor3 = bg end
-				end
-				if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
-					local tc = Remap(obj.TextColor3)
-					if tc then obj.TextColor3 = tc end
-				end
-				if obj:IsA("ImageLabel") then
-					local ic = Remap(obj.ImageColor3)
-					if ic then obj.ImageColor3 = ic end
-				end
-				if obj:IsA("TextBox") then
-					local pc = Remap(obj.PlaceholderColor3)
-					if pc then obj.PlaceholderColor3 = pc end
-				end
-				if obj:IsA("UIStroke") then
-					local sc = Remap(obj.Color)
-					if sc then obj.Color = sc end
-				end
-				if obj:IsA("ScrollingFrame") then
-					local sb = Remap(obj.ScrollBarImageColor3)
-					if sb then obj.ScrollBarImageColor3 = sb end
-				end
-			end)
-		end
-
-		NovaLib:Notify({
-			Title = "Theme",
-			Content = "Theme set to " .. name .. ".",
-			Type = "Info",
-		})
-	end
-
-	function Window:Destroy()
-		for _, conn in ipairs(Window.Connections) do
-			pcall(function() conn:Disconnect() end)
-		end
-		table.clear(Window.Connections)
-		screenGui:Destroy()
-	end
+	Window.TabList = tabList
+	Window.Content = content
 
 	return Window
+end
+
+--// Window-level OOP Methods ---------------------------------------------------
+
+function WindowProto:Notify(opts)
+	NovaLib:Notify(opts)
+end
+
+function WindowProto:SaveConfig(name)
+	local ok = NovaLib:SaveConfig(name or "default")
+	NovaLib:Notify({
+		Title = ok and "Config Saved" or "Save Failed",
+		Content = ok and ("Saved to " .. ConfigFolder .. "/" .. (name or "default") .. ".json")
+			or "Your executor does not support file functions.",
+		Type = ok and "Success" or "Error",
+	})
+	return ok
+end
+
+function WindowProto:LoadConfig(name)
+	local data = NovaLib:LoadConfig(name or "default", self.Callbacks)
+	NovaLib:Notify({
+		Title = data and "Config Loaded" or "Load Failed",
+		Content = data and "Your settings have been applied." or "No config found or executor unsupported.",
+		Type = data and "Success" or "Error",
+	})
+	return data
+end
+
+function WindowProto:Destroy()
+	for _, conn in ipairs(self.Connections) do
+		pcall(function() conn:Disconnect() end)
+	end
+	table.clear(self.Connections)
+	self.Gui:Destroy()
 end
 
 

@@ -29,14 +29,19 @@ local Mouse = LocalPlayer and LocalPlayer:GetMouse()
 local Tab = {}
 Tab.__index = Tab
 
+--// Window metatable (used to modularize window functions)
+local WindowProto = {}
+WindowProto.__index = WindowProto
+
 --// Fonts
 NovaLib.Fonts = {
     Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
     Body   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular),
     Medium = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium),
     Bold   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-    Mono   = Font.new("rbxasset://fonts/families/Code.json", Enum.FontWeight.Regular),
-    Pixel  = Font.new("rbxasset://fonts/families/Arcade.json", Enum.FontWeight.Regular),
+    Mono   = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Regular),
+    Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular),
+    Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
 }
 
 --// Standardized control heights
