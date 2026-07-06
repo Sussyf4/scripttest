@@ -54,7 +54,7 @@ function NovaLib:Notify(options)
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Position = UDim2.new(1.2, 0, 0, 0), -- slide offscreen initially
 		BackgroundColor3 = Theme.Secondary,
-		BackgroundTransparency = 0.05, -- solid feel background
+		BackgroundTransparency = 0, -- solid background
 		Parent = wrapper,
 	})
 	Round(card, 8)

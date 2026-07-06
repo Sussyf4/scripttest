@@ -2,6 +2,13 @@
 
 function WindowProto:SetTheme(name)
 	local newTheme = NovaLib.Themes[name]
+	if not newTheme then
+		if name == "Black" then
+			newTheme = NovaLib.Themes.Darker
+		elseif name == "Midnight" then
+			newTheme = NovaLib.Themes.Amethyst
+		end
+	end
 	if not newTheme then return end
 	local oldTheme = Theme
 	Theme = newTheme

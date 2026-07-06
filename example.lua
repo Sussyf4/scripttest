@@ -134,7 +134,7 @@ SettingsTab:CreateInput({
 
 SettingsTab:CreateDropdown({
 	Name = "Theme",
-	Options = { "Black", "Dark", "Light", "Midnight" },
+	Options = { "Black", "Dark", "Light", "Midnight", "Aqua", "Rose" },
 	Default = "Black",
 	Flag = "UITheme",
 	Callback = function(option)

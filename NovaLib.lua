@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-06 14:59:48
+	Generated at: 2026-07-06 21:13:45
 ]]
 
 --// File: src/init.lua //--
@@ -688,6 +688,13 @@ end
 
 function WindowProto:SetTheme(name)
 	local newTheme = NovaLib.Themes[name]
+	if not newTheme then
+		if name == "Black" then
+			newTheme = NovaLib.Themes.Darker
+		elseif name == "Midnight" then
+			newTheme = NovaLib.Themes.Amethyst
+		end
+	end
 	if not newTheme then return end
 	local oldTheme = Theme
 	Theme = newTheme
@@ -896,7 +903,7 @@ function NovaLib:Notify(options)
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Position = UDim2.new(1.2, 0, 0, 0), -- slide offscreen initially
 		BackgroundColor3 = Theme.Secondary,
-		BackgroundTransparency = 0.05, -- solid feel background
+		BackgroundTransparency = 0, -- solid background
 		Parent = wrapper,
 	})
 	Round(card, 8)
