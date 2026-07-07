@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-07 18:22:51
+	Generated at: 2026-07-07 18:31:48
 ]]
 
 --// File: src/init.lua //--
@@ -1109,7 +1109,7 @@ function WindowProto:SetTheme(name)
 	if not newTheme then
 		if name == "Black" then
 			newTheme = NovaLib.Themes.Darker
-		elseif name == "Midnight" then
+		elseif name == "Midnight" or name == "Amethyst" then
 			newTheme = NovaLib.Themes.Amethyst
 		end
 	end
@@ -1497,7 +1497,6 @@ function NovaLib:Notify(options)
 	})
 	Round(card, 8)
 	local cardStroke = Stroke(card, Theme.StrokeLight, 1, 0.3)
-	Sheen(card, 0.03)
 
 	local shadow = Shadow(card, 8, 0.85)
 
@@ -2877,7 +2876,7 @@ function NovaLib:CreateWindow(options)
 
 	if themeName == "Black" then
 		Theme = NovaLib.Themes.Darker
-	elseif themeName == "Midnight" then
+	elseif themeName == "Midnight" or themeName == "Amethyst" then
 		Theme = NovaLib.Themes.Amethyst
 	elseif NovaLib.Themes[themeName] then
 		Theme = NovaLib.Themes[themeName]

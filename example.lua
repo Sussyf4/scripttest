@@ -6,7 +6,7 @@ local Nova = loadstring(game:HttpGet(
 local Window = Nova:CreateWindow({
 	Title = "Nova Hub",
 	SubTitle = "by you",
-	Theme = "Black",             -- "Black" (Darker) | "Dark" | "Light" | "Midnight" (Amethyst) | "Aqua" | "Rose"
+	Theme = "Black",             -- "Black" (Darker) | "Dark" | "Light" | "Amethyst" | "Aqua" | "Rose"
 	ToggleKey = Enum.KeyCode.RightControl,
 	Intro = true,
 	IntroText = "Loading Nova Hub...",
@@ -134,7 +134,7 @@ SettingsTab:CreateInput({
 
 SettingsTab:CreateDropdown({
 	Name = "Theme",
-	Options = { "Black", "Dark", "Light", "Midnight", "Aqua", "Rose" },
+	Options = { "Black", "Dark", "Light", "Amethyst", "Aqua", "Rose" },
 	Default = "Black",
 	Flag = "UITheme",
 	Callback = function(option)

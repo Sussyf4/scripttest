@@ -5,7 +5,7 @@ function WindowProto:SetTheme(name)
 	if not newTheme then
 		if name == "Black" then
 			newTheme = NovaLib.Themes.Darker
-		elseif name == "Midnight" then
+		elseif name == "Midnight" or name == "Amethyst" then
 			newTheme = NovaLib.Themes.Amethyst
 		end
 	end

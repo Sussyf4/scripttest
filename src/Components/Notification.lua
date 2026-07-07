@@ -97,7 +97,6 @@ function NovaLib:Notify(options)
 	})
 	Round(card, 8)
 	local cardStroke = Stroke(card, Theme.StrokeLight, 1, 0.3)
-	Sheen(card, 0.03)
 
 	local shadow = Shadow(card, 8, 0.85)
 
