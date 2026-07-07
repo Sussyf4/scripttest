@@ -10,7 +10,7 @@ function NovaLib:CreateWindow(options)
 
 	if themeName == "Black" then
 		Theme = NovaLib.Themes.Darker
-	elseif themeName == "Midnight" or themeName == "Amethyst" then
+	elseif themeName == "Amethyst" then
 		Theme = NovaLib.Themes.Amethyst
 	elseif NovaLib.Themes[themeName] then
 		Theme = NovaLib.Themes[themeName]
