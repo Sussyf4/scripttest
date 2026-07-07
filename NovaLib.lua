@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-07 15:23:06
+	Generated at: 2026-07-07 15:27:08
 ]]
 
 --// File: src/init.lua //--
@@ -754,6 +754,8 @@ end
 --// File: src/Intro.lua //--
 --// Intro (Wind + Letter Fade Animation) --------------------------------------
 
+local TextService = game:GetService("TextService")
+
 local function PlayIntro(titleText, _subText)
 	local introGui = Create("ScreenGui", {
 		Name = "NovaIntro",
@@ -771,10 +773,9 @@ local function PlayIntro(titleText, _subText)
 		Parent = introGui,
 	})
 
-	-- Title container — centered row of character labels
 	local titleContainer = Create("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, 0, 0.5, -20),
+		Position = UDim2.new(0.5, 0, 0.5, -30),
 		Size = UDim2.new(0, 0, 0, 60),
 		AutomaticSize = Enum.AutomaticSize.X,
 		BackgroundTransparency = 1,
@@ -791,20 +792,27 @@ local function PlayIntro(titleText, _subText)
 	local charLabels = {}
 	for i = 1, #titleText do
 		local char = string.sub(titleText, i, i)
-
+		local charSize = TextService:GetTextSize(char, 42, Enum.Font.PressStart2P, Vector2.new(1000, 1000))
+		
+		local wrapper = Create("Frame", {
+			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+			Parent = titleContainer,
+		})
+		
 		local label = Create("TextLabel", {
-			Size = UDim2.new(0, 0, 1, 0),
-			AutomaticSize = Enum.AutomaticSize.X,
+			Position = UDim2.new(0, 40, 0, 0), -- 40 X offset
+			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundTransparency = 1,
 			FontFace = NovaLib.Fonts.Pixel,
 			Text = char,
 			TextColor3 = Theme.Text,
 			TextSize = 42,
 			TextTransparency = 1, -- start hidden
-			LayoutOrder = i,
-			Parent = titleContainer,
+			Parent = wrapper,
 		})
-
+		
 		-- tiny glow behind the letters
 		Create("UIStroke", {
 			Color = Theme.AccentGlow,
@@ -812,17 +820,10 @@ local function PlayIntro(titleText, _subText)
 			Transparency = 0.85,
 			Parent = label,
 		})
-
-		-- Padding for offset animation
-		local pad = Create("UIPadding", {
-			PaddingLeft = UDim.new(0, 40), -- wind offset
-			Parent = label,
-		})
-
-		table.insert(charLabels, { label = label, pad = pad })
+		
+		table.insert(charLabels, label)
 	end
 
-	-- Subtitle container
 	local subText = _subText or "Loading interface..."
 	local subContainer = Create("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -843,58 +844,56 @@ local function PlayIntro(titleText, _subText)
 	local subLabels = {}
 	for i = 1, #subText do
 		local char = string.sub(subText, i, i)
-
+		local charSize = TextService:GetTextSize(char, 16, Enum.Font.Gotham, Vector2.new(1000, 1000))
+		
+		local wrapper = Create("Frame", {
+			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+			Parent = subContainer,
+		})
+		
 		local label = Create("TextLabel", {
-			Size = UDim2.new(0, 0, 1, 0),
-			AutomaticSize = Enum.AutomaticSize.X,
+			Position = UDim2.new(0, 30, 0, 0), -- 30 X offset
+			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundTransparency = 1,
 			FontFace = NovaLib.Fonts.Medium,
 			Text = char,
 			TextColor3 = Theme.SubText,
 			TextSize = 16,
 			TextTransparency = 1, -- start hidden
-			LayoutOrder = i,
-			Parent = subContainer,
+			Parent = wrapper,
 		})
-
-		local pad = Create("UIPadding", {
-			PaddingLeft = UDim.new(0, 30), -- wind offset
-			Parent = label,
-		})
-
-		table.insert(subLabels, { label = label, pad = pad })
+		
+		table.insert(subLabels, label)
 	end
 
 	-- Fade backdrop in
 	Tween(backdrop, { BackgroundTransparency = 0 }, 0.35)
 	task.wait(0.35)
 
-	-- Wind-in title characters (staggered)
-	for i, data in ipairs(charLabels) do
-		Tween(data.pad, { PaddingLeft = UDim.new(0, 0) }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-		Tween(data.label, { TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	-- Wind-in title characters
+	for i, label in ipairs(charLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 		task.wait(0.05)
 	end
 
 	-- Wait then wind-in subtitle characters
 	task.wait(0.3)
-	for i, data in ipairs(subLabels) do
-		Tween(data.pad, { PaddingLeft = UDim.new(0, 0) }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-		Tween(data.label, { TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	for i, label in ipairs(subLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 		task.wait(0.03)
 	end
 
 	-- Hold
 	task.wait(1.5)
 
-	-- Drift out simultaneously (upward + fade)
-	for _, data in ipairs(charLabels) do
-		Tween(data.pad, { PaddingTop = UDim.new(0, 20) }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-		Tween(data.label, { TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	-- Drift out simultaneously
+	for _, label in ipairs(charLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, -20), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	end
-	for _, data in ipairs(subLabels) do
-		Tween(data.pad, { PaddingTop = UDim.new(0, 15) }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-		Tween(data.label, { TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	for _, label in ipairs(subLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, -15), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	end
 	task.wait(0.38)
 
