@@ -1,7 +1,5 @@
 --// Intro (Wind + Letter Fade Animation) --------------------------------------
 
-local TextService = game:GetService("TextService")
-
 local function PlayIntro(titleText, _subText)
 	local introGui = Create("ScreenGui", {
 		Name = "NovaIntro",
@@ -38,26 +36,48 @@ local function PlayIntro(titleText, _subText)
 	local charLabels = {}
 	for i = 1, #titleText do
 		local char = string.sub(titleText, i, i)
-		local charSize = TextService:GetTextSize(char, 42, Enum.Font.Code, Vector2.new(1000, 1000))
+		local assetId = NovaLib.FontMaps and NovaLib.FontMaps.PressStart2P and (
+			NovaLib.FontMaps.PressStart2P[char] 
+			or NovaLib.FontMaps.PressStart2P[string.lower(char)] 
+			or NovaLib.FontMaps.PressStart2P[string.upper(char)]
+		)
 		
+		local charWidth = 32
+		local charHeight = 32
+		if char == " " then
+			charWidth = 16
+		end
+
 		local wrapper = Create("Frame", {
-			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			Size = UDim2.new(0, charWidth, 0, charHeight),
 			BackgroundTransparency = 1,
 			LayoutOrder = i,
 			Parent = titleContainer,
 		})
 		
-		local label = Create("TextLabel", {
-			Position = UDim2.new(0, 40, 0, 0), -- 40 X offset
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			FontFace = NovaLib.Fonts.Pixel,
-			Text = char,
-			TextColor3 = Theme.Text,
-			TextSize = 42,
-			TextTransparency = 1, -- start hidden
-			Parent = wrapper,
-		})
+		local label
+		if assetId then
+			label = Create("ImageLabel", {
+				Position = UDim2.new(0, 40, 0, 0), -- 40 X offset
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Image = assetId,
+				ImageColor3 = Theme.Text,
+				ImageTransparency = 1, -- start hidden
+				Parent = wrapper,
+			})
+		else
+			label = Create("TextLabel", {
+				Position = UDim2.new(0, 40, 0, 0),
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Text = char,
+				TextColor3 = Theme.Text,
+				TextSize = 42,
+				TextTransparency = 1,
+				Parent = wrapper,
+			})
+		end
 		
 		-- tiny glow behind the letters
 		Create("UIStroke", {
@@ -90,26 +110,48 @@ local function PlayIntro(titleText, _subText)
 	local subLabels = {}
 	for i = 1, #subText do
 		local char = string.sub(subText, i, i)
-		local charSize = TextService:GetTextSize(char, 16, Enum.Font.Gotham, Vector2.new(1000, 1000))
+		local assetId = NovaLib.FontMaps and NovaLib.FontMaps.SourGummy and (
+			NovaLib.FontMaps.SourGummy[char] 
+			or NovaLib.FontMaps.SourGummy[string.lower(char)] 
+			or NovaLib.FontMaps.SourGummy[string.upper(char)]
+		)
 		
+		local charWidth = 12
+		local charHeight = 18
+		if char == " " then
+			charWidth = 8
+		end
+
 		local wrapper = Create("Frame", {
-			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			Size = UDim2.new(0, charWidth, 0, charHeight),
 			BackgroundTransparency = 1,
 			LayoutOrder = i,
 			Parent = subContainer,
 		})
 		
-		local label = Create("TextLabel", {
-			Position = UDim2.new(0, 30, 0, 0), -- 30 X offset
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			FontFace = NovaLib.Fonts.Medium,
-			Text = char,
-			TextColor3 = Theme.SubText,
-			TextSize = 16,
-			TextTransparency = 1, -- start hidden
-			Parent = wrapper,
-		})
+		local label
+		if assetId then
+			label = Create("ImageLabel", {
+				Position = UDim2.new(0, 30, 0, 0), -- 30 X offset
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Image = assetId,
+				ImageColor3 = Theme.SubText,
+				ImageTransparency = 1, -- start hidden
+				Parent = wrapper,
+			})
+		else
+			label = Create("TextLabel", {
+				Position = UDim2.new(0, 30, 0, 0),
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Text = char,
+				TextColor3 = Theme.SubText,
+				TextSize = 16,
+				TextTransparency = 1,
+				Parent = wrapper,
+			})
+		end
 		
 		table.insert(subLabels, label)
 	end
@@ -120,14 +162,16 @@ local function PlayIntro(titleText, _subText)
 
 	-- Wind-in title characters
 	for i, label in ipairs(charLabels) do
-		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local propName = label:IsA("ImageLabel") and "ImageTransparency" or "TextTransparency"
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), [propName] = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 		task.wait(0.05)
 	end
 
 	-- Wait then wind-in subtitle characters
 	task.wait(0.3)
 	for i, label in ipairs(subLabels) do
-		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local propName = label:IsA("ImageLabel") and "ImageTransparency" or "TextTransparency"
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), [propName] = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 		task.wait(0.03)
 	end
 
@@ -136,10 +180,12 @@ local function PlayIntro(titleText, _subText)
 
 	-- Drift out simultaneously
 	for _, label in ipairs(charLabels) do
-		Tween(label, { Position = UDim2.new(0, 0, 0, -20), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+		local propName = label:IsA("ImageLabel") and "ImageTransparency" or "TextTransparency"
+		Tween(label, { Position = UDim2.new(0, 0, 0, -20), [propName] = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	end
 	for _, label in ipairs(subLabels) do
-		Tween(label, { Position = UDim2.new(0, 0, 0, -15), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+		local propName = label:IsA("ImageLabel") and "ImageTransparency" or "TextTransparency"
+		Tween(label, { Position = UDim2.new(0, 0, 0, -15), [propName] = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	end
 	task.wait(0.38)
 

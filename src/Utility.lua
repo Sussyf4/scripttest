@@ -15,7 +15,7 @@ local function Create(class, props, children)
 				elseif string.find(fontName, "VT323") or string.find(fontName, "Terminal") then
 					fallback = Enum.Font.Code
 				elseif string.find(fontName, "SourGummy") then
-					fallback = Enum.Font.GothamMedium
+					fallback = Enum.Font.Gotham
 				end
 				pcall(function()
 					obj.Font = fallback
