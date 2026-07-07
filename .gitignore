@@ -1,5 +1,7 @@
 assets/
 assetsBACKUP/
+assets_map.luau
+NovaLib_Improvement_Suggestion_and_Prompt_v3.md
 *.db
 *.db-shm
 *.db-wal
