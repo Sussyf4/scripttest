@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-07 18:31:48
+	Generated at: 2026-07-07 18:32:13
 ]]
 
 --// File: src/init.lua //--
@@ -1186,11 +1186,23 @@ local function PlayIntro(titleText, _subText)
 		Parent = introGui,
 	})
 
+	local totalTitleWidth = 0
+	for i = 1, #titleText do
+		local char = string.sub(titleText, i, i)
+		totalTitleWidth = totalTitleWidth + ((char == " ") and 16 or 32)
+	end
+
+	local subText = _subText or "Loading interface..."
+	local totalSubWidth = 0
+	for i = 1, #subText do
+		local char = string.sub(subText, i, i)
+		totalSubWidth = totalSubWidth + ((char == " ") and 8 or 12)
+	end
+
 	local titleContainer = Create("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, 0, 0.5, -30),
-		Size = UDim2.new(0, 0, 0, 60),
-		AutomaticSize = Enum.AutomaticSize.X,
+		Position = UDim2.new(0.5, 0, 0.5, -20),
+		Size = UDim2.new(0, totalTitleWidth, 0, 32),
 		BackgroundTransparency = 1,
 		Parent = introGui,
 	}, {
@@ -1259,12 +1271,10 @@ local function PlayIntro(titleText, _subText)
 		table.insert(charLabels, label)
 	end
 
-	local subText = _subText or "Loading interface..."
 	local subContainer = Create("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, 0, 0.5, 30),
-		Size = UDim2.new(0, 0, 0, 24),
-		AutomaticSize = Enum.AutomaticSize.X,
+		Position = UDim2.new(0.5, 0, 0.5, 20),
+		Size = UDim2.new(0, totalSubWidth, 0, 18),
 		BackgroundTransparency = 1,
 		Parent = introGui,
 	}, {
