@@ -3,7 +3,27 @@
 local function Create(class, props, children)
 	local obj = Instance.new(class)
 	for k, v in pairs(props or {}) do
-		obj[k] = v
+		if k == "FontFace" then
+			local success = pcall(function()
+				obj.FontFace = v
+			end)
+			if not success then
+				local fontName = tostring(v)
+				local fallback = Enum.Font.Gotham
+				if string.find(fontName, "PressStart2P") or string.find(fontName, "Pixel") then
+					fallback = Enum.Font.PressStart2P
+				elseif string.find(fontName, "VT323") or string.find(fontName, "Terminal") then
+					fallback = Enum.Font.Code
+				elseif string.find(fontName, "SourGummy") then
+					fallback = Enum.Font.FredokaOne
+				end
+				pcall(function()
+					obj.Font = fallback
+				end)
+			end
+		else
+			obj[k] = v
+		end
 	end
 	for _, child in ipairs(children or {}) do
 		child.Parent = obj
