@@ -38,7 +38,7 @@ local function PlayIntro(titleText, _subText)
 	local charLabels = {}
 	for i = 1, #titleText do
 		local char = string.sub(titleText, i, i)
-		local charSize = TextService:GetTextSize(char, 42, Enum.Font.PressStart2P, Vector2.new(1000, 1000))
+		local charSize = TextService:GetTextSize(char, 42, Enum.Font.Code, Vector2.new(1000, 1000))
 		
 		local wrapper = Create("Frame", {
 			Size = UDim2.new(0, charSize.X, 0, charSize.Y),

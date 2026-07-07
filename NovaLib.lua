@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-07 15:38:21
+	Generated at: 2026-07-07 15:53:14
 ]]
 
 --// File: src/init.lua //--
@@ -505,11 +505,11 @@ local function Create(class, props, children)
 				local fontName = tostring(v)
 				local fallback = Enum.Font.Gotham
 				if string.find(fontName, "PressStart2P") or string.find(fontName, "Pixel") then
-					fallback = Enum.Font.PressStart2P
+					fallback = Enum.Font.Code
 				elseif string.find(fontName, "VT323") or string.find(fontName, "Terminal") then
 					fallback = Enum.Font.Code
 				elseif string.find(fontName, "SourGummy") then
-					fallback = Enum.Font.FredokaOne
+					fallback = Enum.Font.GothamMedium
 				end
 				pcall(function()
 					obj.Font = fallback
@@ -812,7 +812,7 @@ local function PlayIntro(titleText, _subText)
 	local charLabels = {}
 	for i = 1, #titleText do
 		local char = string.sub(titleText, i, i)
-		local charSize = TextService:GetTextSize(char, 42, Enum.Font.PressStart2P, Vector2.new(1000, 1000))
+		local charSize = TextService:GetTextSize(char, 42, Enum.Font.Code, Vector2.new(1000, 1000))
 		
 		local wrapper = Create("Frame", {
 			Size = UDim2.new(0, charSize.X, 0, charSize.Y),

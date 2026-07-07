@@ -11,11 +11,11 @@ local function Create(class, props, children)
 				local fontName = tostring(v)
 				local fallback = Enum.Font.Gotham
 				if string.find(fontName, "PressStart2P") or string.find(fontName, "Pixel") then
-					fallback = Enum.Font.PressStart2P
+					fallback = Enum.Font.Code
 				elseif string.find(fontName, "VT323") or string.find(fontName, "Terminal") then
 					fallback = Enum.Font.Code
 				elseif string.find(fontName, "SourGummy") then
-					fallback = Enum.Font.FredokaOne
+					fallback = Enum.Font.GothamMedium
 				end
 				pcall(function()
 					obj.Font = fallback
