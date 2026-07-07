@@ -1,4 +1,6 @@
---// Intro (letter-by-letter pixel reveal on black, no loading indicators) -----
+--// Intro (Wind + Letter Fade Animation) --------------------------------------
+
+local TextService = game:GetService("TextService")
 
 local function PlayIntro(titleText, _subText)
 	local introGui = Create("ScreenGui", {
@@ -17,46 +19,131 @@ local function PlayIntro(titleText, _subText)
 		Parent = introGui,
 	})
 
-	local logo = Create("TextLabel", {
+	local titleContainer = Create("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, 0, 0.5, 0),
-		Size = UDim2.new(1, -40, 0, 60),
+		Position = UDim2.new(0.5, 0, 0.5, -30),
+		Size = UDim2.new(0, 0, 0, 60),
+		AutomaticSize = Enum.AutomaticSize.X,
 		BackgroundTransparency = 1,
-		FontFace = NovaLib.Fonts.Pixel,
-		Text = "",
-		TextColor3 = Theme.Text,
-		TextSize = 42,
 		Parent = introGui,
+	}, {
+		Create("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
 	})
 
-	-- tiny glow behind the letters (soft accent stroke, no assets)
-	Create("UIStroke", {
-		Color = Theme.AccentGlow,
-		Thickness = 1,
-		Transparency = 0.85,
-		Parent = logo,
+	local charLabels = {}
+	for i = 1, #titleText do
+		local char = string.sub(titleText, i, i)
+		local charSize = TextService:GetTextSize(char, 42, NovaLib.Fonts.Pixel.Family, Vector2.new(1000, 1000))
+		
+		local wrapper = Create("Frame", {
+			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+			Parent = titleContainer,
+		})
+		
+		local label = Create("TextLabel", {
+			Position = UDim2.new(0, 40, 0, 0), -- 40 X offset
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			FontFace = NovaLib.Fonts.Pixel,
+			Text = char,
+			TextColor3 = Theme.Text,
+			TextSize = 42,
+			TextTransparency = 1, -- start hidden
+			Parent = wrapper,
+		})
+		
+		-- tiny glow behind the letters
+		Create("UIStroke", {
+			Color = Theme.AccentGlow,
+			Thickness = 1,
+			Transparency = 0.85,
+			Parent = label,
+		})
+		
+		table.insert(charLabels, label)
+	end
+
+	local subText = _subText or "Loading interface..."
+	local subContainer = Create("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0.5, 30),
+		Size = UDim2.new(0, 0, 0, 24),
+		AutomaticSize = Enum.AutomaticSize.X,
+		BackgroundTransparency = 1,
+		Parent = introGui,
+	}, {
+		Create("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
 	})
 
-	-- black backdrop fades in first
+	local subLabels = {}
+	for i = 1, #subText do
+		local char = string.sub(subText, i, i)
+		local charSize = TextService:GetTextSize(char, 16, NovaLib.Fonts.Medium.Family, Vector2.new(1000, 1000))
+		
+		local wrapper = Create("Frame", {
+			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+			Parent = subContainer,
+		})
+		
+		local label = Create("TextLabel", {
+			Position = UDim2.new(0, 30, 0, 0), -- 30 X offset
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			FontFace = NovaLib.Fonts.Medium,
+			Text = char,
+			TextColor3 = Theme.SubText,
+			TextSize = 16,
+			TextTransparency = 1, -- start hidden
+			Parent = wrapper,
+		})
+		
+		table.insert(subLabels, label)
+	end
+
+	-- Fade backdrop in
 	Tween(backdrop, { BackgroundTransparency = 0 }, 0.35)
 	task.wait(0.35)
 
-	-- letters appear one by one: N -> No -> Nov -> Nova
-	for i = 1, #titleText do
-		logo.Text = string.sub(titleText, 1, i)
+	-- Wind-in title characters
+	for i, label in ipairs(charLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 		task.wait(0.05)
 	end
 
-	-- hold
-	task.wait(1.2)
-
-	-- letters disappear one by one: Nova -> Nov -> No -> N
-	for i = #titleText - 1, 0, -1 do
-		logo.Text = string.sub(titleText, 1, i)
-		task.wait(0.05)
+	-- Wait then wind-in subtitle characters
+	task.wait(0.3)
+	for i, label in ipairs(subLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		task.wait(0.03)
 	end
 
-	-- fade the backdrop away
+	-- Hold
+	task.wait(1.5)
+
+	-- Drift out simultaneously
+	for _, label in ipairs(charLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, -20), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	end
+	for _, label in ipairs(subLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, -15), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	end
+	task.wait(0.38)
+
+	-- Fade backdrop out
 	Tween(backdrop, { BackgroundTransparency = 1 }, 0.4)
 	task.wait(0.45)
 	introGui:Destroy()

@@ -14,6 +14,8 @@ local NovaLib = {}
 NovaLib.__index = NovaLib
 NovaLib.Version = "2.3.0"
 NovaLib.Flags = {}
+NovaLib.NotificationPosition = "BottomRight"
+NovaLib.NotificationLimit = 3
 
 --// Services
 local TweenService = game:GetService("TweenService")
@@ -35,13 +37,14 @@ WindowProto.__index = WindowProto
 
 --// Fonts
 NovaLib.Fonts = {
-    Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-    Body   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular),
-    Medium = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium),
-    Bold   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-    Mono   = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Regular),
-    Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular),
-    Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
+	Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold), -- Window & Intro title
+	Medium = Font.fromName("Sour Gummy", Enum.FontWeight.Medium), -- main UI Medium
+	Body   = Font.fromName("Sour Gummy", Enum.FontWeight.Regular), -- main UI Regular
+	Bold   = Font.fromName("Sour Gummy", Enum.FontWeight.Bold), -- main UI Bold
+	Mono   = Font.fromName("Sour Gummy", Enum.FontWeight.Regular), -- main UI Mono
+	Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular), -- Intro Pixel
+	Terminal = Font.fromName("VT323"), -- Monospace retro terminal for KeySystem
+	Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
 }
 
 --// Standardized control heights

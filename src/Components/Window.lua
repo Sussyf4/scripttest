@@ -84,7 +84,6 @@ function NovaLib:CreateWindow(options)
 		Parent = main,
 	})
 	Round(topBar, 12)
-	Sheen(topBar, 0.05)
 	-- square off bottom
 	Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 12),

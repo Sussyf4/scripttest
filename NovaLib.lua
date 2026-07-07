@@ -1,7 +1,7 @@
 --[[
 	NovaLib UI Library
 	BUNDLED PRODUCTION BUILD
-	Generated at: 2026-07-06 21:13:45
+	Generated at: 2026-07-07 15:02:45
 ]]
 
 --// File: src/init.lua //--
@@ -21,6 +21,8 @@ local NovaLib = {}
 NovaLib.__index = NovaLib
 NovaLib.Version = "2.3.0"
 NovaLib.Flags = {}
+NovaLib.NotificationPosition = "BottomRight"
+NovaLib.NotificationLimit = 3
 
 --// Services
 local TweenService = game:GetService("TweenService")
@@ -42,13 +44,14 @@ WindowProto.__index = WindowProto
 
 --// Fonts
 NovaLib.Fonts = {
-    Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-    Body   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular),
-    Medium = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium),
-    Bold   = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-    Mono   = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Regular),
-    Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular),
-    Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
+	Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold), -- Window & Intro title
+	Medium = Font.fromName("Sour Gummy", Enum.FontWeight.Medium), -- main UI Medium
+	Body   = Font.fromName("Sour Gummy", Enum.FontWeight.Regular), -- main UI Regular
+	Bold   = Font.fromName("Sour Gummy", Enum.FontWeight.Bold), -- main UI Bold
+	Mono   = Font.fromName("Sour Gummy", Enum.FontWeight.Regular), -- main UI Mono
+	Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular), -- Intro Pixel
+	Terminal = Font.fromName("VT323"), -- Monospace retro terminal for KeySystem
+	Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
 }
 
 --// Standardized control heights
@@ -749,7 +752,9 @@ end
 
 
 --// File: src/Intro.lua //--
---// Intro (letter-by-letter pixel reveal on black, no loading indicators) -----
+--// Intro (Wind + Letter Fade Animation) --------------------------------------
+
+local TextService = game:GetService("TextService")
 
 local function PlayIntro(titleText, _subText)
 	local introGui = Create("ScreenGui", {
@@ -768,46 +773,131 @@ local function PlayIntro(titleText, _subText)
 		Parent = introGui,
 	})
 
-	local logo = Create("TextLabel", {
+	local titleContainer = Create("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, 0, 0.5, 0),
-		Size = UDim2.new(1, -40, 0, 60),
+		Position = UDim2.new(0.5, 0, 0.5, -30),
+		Size = UDim2.new(0, 0, 0, 60),
+		AutomaticSize = Enum.AutomaticSize.X,
 		BackgroundTransparency = 1,
-		FontFace = NovaLib.Fonts.Pixel,
-		Text = "",
-		TextColor3 = Theme.Text,
-		TextSize = 42,
 		Parent = introGui,
+	}, {
+		Create("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
 	})
 
-	-- tiny glow behind the letters (soft accent stroke, no assets)
-	Create("UIStroke", {
-		Color = Theme.AccentGlow,
-		Thickness = 1,
-		Transparency = 0.85,
-		Parent = logo,
+	local charLabels = {}
+	for i = 1, #titleText do
+		local char = string.sub(titleText, i, i)
+		local charSize = TextService:GetTextSize(char, 42, NovaLib.Fonts.Pixel.Family, Vector2.new(1000, 1000))
+		
+		local wrapper = Create("Frame", {
+			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+			Parent = titleContainer,
+		})
+		
+		local label = Create("TextLabel", {
+			Position = UDim2.new(0, 40, 0, 0), -- 40 X offset
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			FontFace = NovaLib.Fonts.Pixel,
+			Text = char,
+			TextColor3 = Theme.Text,
+			TextSize = 42,
+			TextTransparency = 1, -- start hidden
+			Parent = wrapper,
+		})
+		
+		-- tiny glow behind the letters
+		Create("UIStroke", {
+			Color = Theme.AccentGlow,
+			Thickness = 1,
+			Transparency = 0.85,
+			Parent = label,
+		})
+		
+		table.insert(charLabels, label)
+	end
+
+	local subText = _subText or "Loading interface..."
+	local subContainer = Create("Frame", {
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(0.5, 0, 0.5, 30),
+		Size = UDim2.new(0, 0, 0, 24),
+		AutomaticSize = Enum.AutomaticSize.X,
+		BackgroundTransparency = 1,
+		Parent = introGui,
+	}, {
+		Create("UIListLayout", {
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
 	})
 
-	-- black backdrop fades in first
+	local subLabels = {}
+	for i = 1, #subText do
+		local char = string.sub(subText, i, i)
+		local charSize = TextService:GetTextSize(char, 16, NovaLib.Fonts.Medium.Family, Vector2.new(1000, 1000))
+		
+		local wrapper = Create("Frame", {
+			Size = UDim2.new(0, charSize.X, 0, charSize.Y),
+			BackgroundTransparency = 1,
+			LayoutOrder = i,
+			Parent = subContainer,
+		})
+		
+		local label = Create("TextLabel", {
+			Position = UDim2.new(0, 30, 0, 0), -- 30 X offset
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			FontFace = NovaLib.Fonts.Medium,
+			Text = char,
+			TextColor3 = Theme.SubText,
+			TextSize = 16,
+			TextTransparency = 1, -- start hidden
+			Parent = wrapper,
+		})
+		
+		table.insert(subLabels, label)
+	end
+
+	-- Fade backdrop in
 	Tween(backdrop, { BackgroundTransparency = 0 }, 0.35)
 	task.wait(0.35)
 
-	-- letters appear one by one: N -> No -> Nov -> Nova
-	for i = 1, #titleText do
-		logo.Text = string.sub(titleText, 1, i)
+	-- Wind-in title characters
+	for i, label in ipairs(charLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 		task.wait(0.05)
 	end
 
-	-- hold
-	task.wait(1.2)
-
-	-- letters disappear one by one: Nova -> Nov -> No -> N
-	for i = #titleText - 1, 0, -1 do
-		logo.Text = string.sub(titleText, 1, i)
-		task.wait(0.05)
+	-- Wait then wind-in subtitle characters
+	task.wait(0.3)
+	for i, label in ipairs(subLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, 0), TextTransparency = 0 }, 0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		task.wait(0.03)
 	end
 
-	-- fade the backdrop away
+	-- Hold
+	task.wait(1.5)
+
+	-- Drift out simultaneously
+	for _, label in ipairs(charLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, -20), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	end
+	for _, label in ipairs(subLabels) do
+		Tween(label, { Position = UDim2.new(0, 0, 0, -15), TextTransparency = 1 }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	end
+	task.wait(0.38)
+
+	-- Fade backdrop out
 	Tween(backdrop, { BackgroundTransparency = 1 }, 0.4)
 	task.wait(0.45)
 	introGui:Destroy()
@@ -847,9 +937,11 @@ end
 
 
 --// File: src/Components/Notification.lua //--
---// Notification Component ----------------------------------------------------
+--// Notification Component (Solid style + Queue stack) -----------------------
 
 local NotifyGui, NotifyHolder
+local activeCount = 0
+local pendingQueue = {}
 
 local function EnsureNotifyGui()
 	if NotifyGui and NotifyGui.Parent then return end
@@ -860,35 +952,67 @@ local function EnsureNotifyGui()
 	})
 	ProtectGui(NotifyGui)
 
-	-- cards stack bottom-right of the screen
+	local pos = NovaLib.NotificationPosition or "BottomRight"
+	local anchor, position, vertAlign, horizAlign
+	
+	if pos == "TopRight" then
+		anchor = Vector2.new(1, 0)
+		position = UDim2.new(1, -24, 0, 24)
+		vertAlign = Enum.VerticalAlignment.Top
+		horizAlign = Enum.HorizontalAlignment.Right
+	elseif pos == "TopLeft" then
+		anchor = Vector2.new(0, 0)
+		position = UDim2.new(0, 24, 0, 24)
+		vertAlign = Enum.VerticalAlignment.Top
+		horizAlign = Enum.HorizontalAlignment.Left
+	elseif pos == "BottomLeft" then
+		anchor = Vector2.new(0, 1)
+		position = UDim2.new(0, 24, 1, -24)
+		vertAlign = Enum.VerticalAlignment.Bottom
+		horizAlign = Enum.HorizontalAlignment.Left
+	else -- BottomRight
+		anchor = Vector2.new(1, 1)
+		position = UDim2.new(1, -24, 1, -24)
+		vertAlign = Enum.VerticalAlignment.Bottom
+		horizAlign = Enum.HorizontalAlignment.Right
+	end
+
 	NotifyHolder = Create("Frame", {
 		Name = "Holder",
-		AnchorPoint = Vector2.new(1, 1),
-		Position = UDim2.new(1, -24, 1, -24),
+		AnchorPoint = anchor,
+		Position = position,
 		Size = UDim2.new(0, 300, 1, -48),
 		BackgroundTransparency = 1,
 		Parent = NotifyGui,
 	}, {
 		Create("UIListLayout", {
 			FillDirection = Enum.FillDirection.Vertical,
-			HorizontalAlignment = Enum.HorizontalAlignment.Right,
-			VerticalAlignment = Enum.VerticalAlignment.Bottom,
+			HorizontalAlignment = horizAlign,
+			VerticalAlignment = vertAlign,
 			SortOrder = Enum.SortOrder.LayoutOrder,
-			Padding = UDim.new(0, 10),
+			Padding = UDim.new(0, 8),
 		}),
 	})
 end
 
 function NovaLib:Notify(options)
 	options = options or {}
+	
+	-- Queue logic check
+	if activeCount >= (NovaLib.NotificationLimit or 3) then
+		table.insert(pendingQueue, options)
+		return
+	end
+	
+	activeCount = activeCount + 1
+	EnsureNotifyGui()
+
 	local title = options.Title or "Notification"
 	local content = options.Content or ""
 	local duration = options.Duration or 4
 	local notifType = options.Type or "Info" -- Success, Error, Warning, Info
 
-	EnsureNotifyGui()
-
-	-- Card container wrapper (so UIListLayout works nicely with sliding animations)
+	-- Card container wrapper
 	local wrapper = Create("Frame", {
 		Name = "NotifWrapper",
 		Size = UDim2.new(1, 0, 0, 0),
@@ -897,11 +1021,15 @@ function NovaLib:Notify(options)
 		Parent = NotifyHolder,
 	})
 
+	local pos = NovaLib.NotificationPosition or "BottomRight"
+	local isLeft = (pos == "TopLeft" or pos == "BottomLeft")
+	local startOffset = isLeft and -120 or 120
+
 	local card = Create("Frame", {
 		Name = "Card",
 		Size = UDim2.new(1, 0, 0, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
-		Position = UDim2.new(1.2, 0, 0, 0), -- slide offscreen initially
+		Position = UDim2.new(0, startOffset, 0, 0), -- slide offscreen offset
 		BackgroundColor3 = Theme.Secondary,
 		BackgroundTransparency = 0, -- solid background
 		Parent = wrapper,
@@ -912,21 +1040,24 @@ function NovaLib:Notify(options)
 
 	local shadow = Shadow(card, 8, 0.85)
 
-	-- Accent vertical strip on the left edge
+	-- Accent configuration
 	local typeColor = Theme.Accent
 	local iconName = "info"
-	if notifType == "Success" then
-		typeColor = Theme.Success
+	if notifType == "Success" or notifType == "success" then
+		typeColor = Color3.fromRGB(25, 200, 80)
 		iconName = "check-circle"
-	elseif notifType == "Error" then
-		typeColor = Theme.Error
-		iconName = "x-circle"
-	elseif notifType == "Warning" then
-		typeColor = Theme.Warning
+	elseif notifType == "Error" or notifType == "error" then
+		typeColor = Color3.fromRGB(200, 50, 50)
+		iconName = "alert-circle"
+	elseif notifType == "Warning" or notifType == "warning" then
+		typeColor = Color3.fromRGB(220, 140, 0)
 		iconName = "alert-triangle"
+	else -- Info / info
+		typeColor = Color3.fromRGB(60, 120, 255)
+		iconName = "info"
 	end
 
-	-- Accent bar starts with absolute height, updated by property changed signal
+	-- Accent left border strip
 	local accentBar = Create("Frame", {
 		Name = "AccentBar",
 		Size = UDim2.new(0, 4, 0, 0),
@@ -937,7 +1068,6 @@ function NovaLib:Notify(options)
 		Parent = card,
 	})
 	Round(accentBar, 4)
-	-- square off the right side of the accent bar so it fits the card left edge
 	Create("Frame", {
 		Size = UDim2.new(0, 2, 1, 0),
 		Position = UDim2.new(1, -2, 0, 0),
@@ -970,7 +1100,7 @@ function NovaLib:Notify(options)
 		Parent = contentFrame,
 	})
 
-	-- Status Lucide icon
+	-- Status icon
 	local iconCircle = Create("Frame", {
 		Size = UDim2.new(0, 26, 0, 26),
 		BackgroundColor3 = typeColor,
@@ -987,7 +1117,7 @@ function NovaLib:Notify(options)
 		icon.Position = UDim2.new(0.5, 0, 0.5, 0)
 	end
 
-	-- Text frame containing title & description (leave space for close button: -54)
+	-- Text frame (leave space for close button)
 	local textFrame = Create("Frame", {
 		Size = UDim2.new(1, -54, 0, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
@@ -1032,7 +1162,7 @@ function NovaLib:Notify(options)
 		})
 	end
 
-	-- Timed progress bar at the bottom
+	-- Progress bar
 	local progressBar = Create("Frame", {
 		Name = "ProgressBar",
 		Size = UDim2.new(1, 0, 0, 2),
@@ -1044,39 +1174,41 @@ function NovaLib:Notify(options)
 	})
 	Round(progressBar, 1)
 
-	-- Hover detection
 	local isHovered = false
-	card.MouseEnter:Connect(function()
-		isHovered = true
-	end)
-	card.MouseLeave:Connect(function()
-		isHovered = false
-	end)
+	card.MouseEnter:Connect(function() isHovered = true end)
+	card.MouseLeave:Connect(function() isHovered = false end)
 
-	-- Keep accentBar and shadow sizes in sync with card's dynamic layout height
 	card:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 		accentBar.Size = UDim2.new(0, 4, 0, card.AbsoluteSize.Y)
 		shadow.Size = UDim2.new(0, card.AbsoluteSize.X, 0, card.AbsoluteSize.Y)
 	end)
 
-	-- Slide & Fade In
-	Tween(card, { Position = UDim2.new(0, 0, 0, 0) }, 0.4, Enum.EasingStyle.Quint)
+	-- Slide in
+	Tween(card, { Position = UDim2.new(0, 0, 0, 0) }, 0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 	Tween(shadow, { Position = UDim2.new(0, 2, 0, 2) }, 0.4, Enum.EasingStyle.Quint)
 
-	-- Close Dismiss Function
 	local connection
 	local function Dismiss()
 		if connection then
 			connection:Disconnect()
 			connection = nil
 		end
-		Tween(card, { Position = UDim2.new(1.2, 0, 0, 0) }, 0.35, Enum.EasingStyle.Quint)
-		Tween(shadow, { Position = UDim2.new(1.2, 2, 0, 2) }, 0.35, Enum.EasingStyle.Quint)
+		
+		-- Slide out
+		Tween(card, { Position = UDim2.new(0, startOffset, 0, 0) }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+		Tween(shadow, { Position = UDim2.new(0, startOffset + 2, 0, 2) }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 		task.wait(0.4)
 		wrapper:Destroy()
+
+		-- Dequeue next
+		activeCount = activeCount - 1
+		if #pendingQueue > 0 then
+			local nextOptions = table.remove(pendingQueue, 1)
+			NovaLib:Notify(nextOptions)
+		end
 	end
 
-	-- Absolute positioned Dismiss/Close Button
+	-- Dismiss Button
 	local dismissBtn = Create("TextButton", {
 		Name = "DismissBtn",
 		Size = UDim2.new(0, 16, 0, 16),
@@ -1101,7 +1233,7 @@ function NovaLib:Notify(options)
 	end)
 	dismissBtn.MouseButton1Click:Connect(Dismiss)
 
-	-- Auto-dismiss loop with hover pause and progress bar update
+	-- Auto dismiss countdown
 	local totalTime = duration
 	local timeLeft = duration
 	connection = game:GetService("RunService").Heartbeat:Connect(function(dt)
@@ -2358,7 +2490,6 @@ function NovaLib:CreateWindow(options)
 		Parent = main,
 	})
 	Round(topBar, 12)
-	Sheen(topBar, 0.05)
 	-- square off bottom
 	Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 12),
