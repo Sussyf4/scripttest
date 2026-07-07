@@ -37,14 +37,14 @@ WindowProto.__index = WindowProto
 
 --// Fonts
 NovaLib.Fonts = {
-	Title  = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold), -- Window & Intro title
-	Medium = Font.fromName("SourGummy", Enum.FontWeight.Medium), -- main UI Medium
-	Body   = Font.fromName("SourGummy", Enum.FontWeight.Regular), -- main UI Regular
-	Bold   = Font.fromName("SourGummy", Enum.FontWeight.Bold), -- main UI Bold
-	Mono   = Font.fromName("SourGummy", Enum.FontWeight.Regular), -- main UI Mono
-	Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular), -- Intro Pixel
-	Terminal = Font.fromName("VT323"), -- Monospace retro terminal for KeySystem
-	Config = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold),
+	Title  = Font.new("rbxasset://fonts/families/Arimo.json", Enum.FontWeight.Bold), -- Title (Arimo Bold)
+	Medium = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular), -- UI Medium (FredokaOne)
+	Body   = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular), -- UI Body (FredokaOne)
+	Bold   = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold), -- UI Bold (FredokaOne)
+	Mono   = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular), -- UI Mono (FredokaOne)
+	Pixel  = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular), -- Intro Pixel (PressStart2P)
+	Terminal = Font.new("rbxasset://fonts/families/PressStart2P.json", Enum.FontWeight.Regular), -- Monospace (PressStart2P)
+	Config = Font.new("rbxasset://fonts/families/Arimo.json", Enum.FontWeight.SemiBold),
 }
 
 --// Standardized control heights

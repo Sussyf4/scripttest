@@ -14,7 +14,6 @@ $files = @(
     "Themes/Aqua.lua",
     "Themes/Rose.lua",
     "Icons.lua",
-    "FontMaps.lua",
     "Utility.lua",
     "Managers/SaveManager.lua",
     "Managers/InterfaceManager.lua",
